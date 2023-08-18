@@ -8,8 +8,8 @@
 
 #define COMMAND_BUILT_IN 1
 #define COMMAND_PATH 2
-#define MAX_LINE_LENGTH 512
-#define INIT_BUFFER_SIZE 5
+#define COMMAND_OUR_BUILT_IN 3
+#define INIT_LINE_LENGTH 128
 
 /* Error ids (all are must be negative) */
 #define E_COMMAND_UNKNOWN -1
@@ -29,39 +29,44 @@ typedef struct Item
 	char *next; /*linked list*/
 } Item;
 
-
-/*utilz.c -> S*/
+/*utilz.c -> Samy*/
 char *_strtok(char *str, const char *delim);
-size_t _getline(char **string, size_t *n, FILE *stream);
-/* get one token which is the command
-* ex. ls and return the path of ls command (usr/bin/ls or built_ins/ls) */
-char *get_built_in_path(char *command);
+ssize_t _getline(char **string, size_t *n, FILE *stream);
+size_t get_str_len(char *str);
+char *get_built_in_path(char *first_token, Item *env);
 
 /*handle_commands.c -> A*/
 int handle_commands(char *commands, Item *env, Item *alias, char *program_name);
 char **filter_commands(char *commands); /*Return: list of commands*/
+int handle_command(char **command, Item *env, Item *alias); /*one command only*/
 int handle_separators(int prev_result, char *separator); /*tells if the next command should be executed or not*/
-int handle_command(char **command, Item *env, Item *alias);
-int get_command_type(char *first_token);
 void handle_error(char *first_token, int error_id, char *program_name);
+int get_command_type(char *first_token);
 
 /*executers.c -> S*/
 /* - fork
 *  - access */
 int command_executer(char *path, int command_type, int argc, char **argv);
 
-/*items1.c -> */
-void name2value(char **str, Item *items);
+/*items_init_free.c -> A*/
+Item *init_env(char **_env); /*the pointer must has a value even if it points to an empty Item*/ 
+Item *init_alias(); /*the pointer must has a value even if it points to an empty Item*/ 
 void free_item(Item *item);
 void free_items_list(Item *items);
-size_t get_items_len(Item *items);
+void name2value(char **str, Item *alias, Item *env);
 
-/*items2.c -> */
-Item *init_env(char **_env); /*the pointer must has a value even if it points to empty Item*/ 
-Item *init_alias(); /*the pointer must has a value even if it points to empty Item*/ 
-char *get_item_value(char *key);
-void set_item(char *key, char *value); /*if the item is already exist then will change its value*/
-void unset_item(char *key);
+/*items_utilz.c -> Samy*/
+size_t get_items_len(Item *items); /*if it's only one empty item then will return 0*/
+char *get_item_value(char *name);
+void set_item(char *name, char *value); /*if the item is already exist then will change its value*/
+void unset_item(char *name);
+
+/* built_in_functions.c -> Samy*/
+int exit(int status);
+int env();
+int setenv(char *name, char *value);
+int unsetenv(char *name);
+int cd(char *directory);
 
 #endif /*MAIN_H*/
 

@@ -42,10 +42,7 @@ char **filter_commands(char *commands)
 * and one otherwise
 */
 int handle_commands(char *commands, Item *env, Item *alias, char *program_name)
-{
-
-}
-
+{}
 
 /**
 * main - The main function
@@ -54,17 +51,12 @@ int main(int argc, char **argv, char **_env)
 {
 	char *buffer = NULL;
 	size_t buffer_size = INIT_BUFFER_SIZE;
-	int bytes_read = 0;
+	ssize_t bytes_read = 0;
 	int still_loop = 0;
 	Item *env = NULL, *alias = NULL;
 
-	buffer = malloc(sizeof(char) * buffer_size);
-	if (!buffer)
-		return (0);
-
-	/*
 	alias = init_alias();
-	env = init_env(_env);*/
+	env = init_env(_env);
 
 	still_loop = isatty(STDIN_FILENO);
 	if (!still_loop) /*Non interactive mode*/
