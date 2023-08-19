@@ -66,7 +66,7 @@ int _exit_(int status);
 int _env_();
 int _setenv_(char *name, char *value);
 int _unsetenv_(char *name);
-int _cd_(char *directory);
+int _cd_(char *directory, char *program_name);
 
 #endif /*MAIN_H*/
 
