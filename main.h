@@ -17,6 +17,8 @@
 #define E_ACCESS_FILE -3
 #define E_FILE_RETURN_E -4 /* executed file return error (-1) */
 
+extern char **environ;
+
 /**
 * item - General item for env and alias
 * @name: name
@@ -29,7 +31,7 @@ typedef struct Item
 	struct Item *next; /*linked list*/
 } Item;
 
-/*---------------Helpers---------------*/
+/*--------------Helpers--------------*/
 char *_strtok(char *str, const char *delim);
 size_t _getline(char **string, size_t *n, FILE *stream);
 size_t _getlineChecker(char **string, size_t *n,
@@ -65,7 +67,7 @@ void free_item(Item *item);
 void free_items_list(Item *items);
 void name2value(char **str, Item *alias, Item *env);
 
-/*items_utilz.c -> Samy*/
+/*------------items_utilize-------------*/
 size_t get_items_len(Item *items); /*if it's only one empty item then will return 0*/
 char *get_item_value(char *name);
 void set_item(char *name, char *value); /*if the item is already exist then will change its value*/
