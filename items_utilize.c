@@ -23,11 +23,10 @@ char *get_item_value(char *name)
 			if (environ[i][j] != name[j])
 				break;
 			if (environ[i][j] == name[j] && (environ[i][j + 1] == '='))
-				return (&environ[i][strlen(name) + 1]);
+				return (&environ[i][_strlen(name) + 1]);
 			j++;
 		}
 		i++;
 	}
 	return (NULL);
 }
-
