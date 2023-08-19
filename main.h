@@ -29,11 +29,21 @@ typedef struct Item
 	struct Item *next; /*linked list*/
 } Item;
 
-/*utilz.c -> Samy*/
+/*---------------Helpers---------------*/
 char *_strtok(char *str, const char *delim);
 size_t _getline(char **string, size_t *n, FILE *stream);
-size_t get_str_len(char *str);
+size_t _getlineChecker(char **string, size_t *n,
+		__attribute__((unused)) FILE * stream);
 char *get_built_in_path(char *first_token, Item *env);
+
+/*--------------strings--------------*/
+size_t _strlen(char *s);
+int _strcmp(char *s1, char *s2);
+char *_strdup(char *str);
+char *_strcpy(char *dest, char *src);
+char *_strcat(char *dest, char *src);
+unsigned int _strspn(char *str, char *target);
+char *_strpbrk(char *str, char *target);
 
 /*handle_commands.c -> A*/
 int handle_commands(char *commands, Item *env, Item *alias, char *program_name);
@@ -61,7 +71,7 @@ char *get_item_value(char *name);
 void set_item(char *name, char *value); /*if the item is already exist then will change its value*/
 void unset_item(char *name);
 
-/* built_in_functions.c -> Samy*/
+/*----------built_in_functions----------*/
 int _exit_(int status);
 int _env_();
 int _setenv_(char *name, char *value);
