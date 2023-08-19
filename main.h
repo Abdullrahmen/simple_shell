@@ -26,12 +26,12 @@ typedef struct Item
 {
 	char *name;
 	char *value;
-	char *next; /*linked list*/
+	struct Item *next; /*linked list*/
 } Item;
 
 /*utilz.c -> Samy*/
 char *_strtok(char *str, const char *delim);
-ssize_t _getline(char **string, size_t *n, FILE *stream);
+size_t _getline(char **string, size_t *n, FILE *stream);
 size_t get_str_len(char *str);
 char *get_built_in_path(char *first_token, Item *env);
 
@@ -62,11 +62,11 @@ void set_item(char *name, char *value); /*if the item is already exist then will
 void unset_item(char *name);
 
 /* built_in_functions.c -> Samy*/
-int exit(int status);
-int env();
-int setenv(char *name, char *value);
-int unsetenv(char *name);
-int cd(char *directory);
+int _exit_(int status);
+int _env_();
+int _setenv_(char *name, char *value);
+int _unsetenv_(char *name);
+int _cd_(char *directory);
 
 #endif /*MAIN_H*/
 
