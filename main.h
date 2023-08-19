@@ -33,7 +33,7 @@ typedef struct Item
 char *_strtok(char *str, const char *delim);
 size_t _getline(char **string, size_t *n, FILE *stream);
 size_t _getlineChecker(char **string, size_t *n,
-		__attribute__((unused)) FILE *stream);
+		__attribute__((unused)) FILE * stream);
 char *get_built_in_path(char *first_token, Item *env);
 
 /*--------------strings--------------*/
