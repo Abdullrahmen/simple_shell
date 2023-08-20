@@ -149,3 +149,33 @@ int _unsetenv_(Item *env, char *name)
 	printf("z\n");
 	return (env_changed);
 }
+
+int delete_nodeint_at_index(Item **head, unsigned int index)
+{
+	Item *current, *previous;
+	unsigned int counter = 0;
+
+	if (!head || !*head)
+		return (-1);
+	if (index == 0)
+	{
+		current = *head;
+		*head = (*head)->next;
+		free(current);
+		return (1);
+	}
+	current = *head;
+	while (current)
+	{
+		if (counter == index)
+		{
+			previous->next = current->next;
+			free(current);
+			return (1);
+		}
+		counter++;
+		previous = current;
+		current = current->next;
+	}
+	return (-1);
+}
