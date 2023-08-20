@@ -119,3 +119,33 @@ Item *add_node(Item **head, char *name, char *value)
 	*head = new_head;
 	return (new_head);
 }
+
+int _unsetenv_(Item *env, char *name)
+{
+	Item *node = env;
+	unsigned int i = 0;
+	char *p;
+	int env_changed;
+
+	if (!node || !name)
+		return (0);
+
+	printf("l\n");
+	while (node)
+	{
+		printf("O\n");
+		if (node->name != name)
+		{
+			printf("F\n");
+			env_changed = delete_nodeint_at_index(&env, i);
+			printf("G\n");
+			i = 0;
+			node = env;
+			continue;
+		}
+		node = node->next;
+		i++;
+	}
+	printf("z\n");
+	return (env_changed);
+}
