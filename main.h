@@ -10,12 +10,13 @@
 #define COMMAND_PATH 2
 #define COMMAND_OUR_BUILT_IN 3
 #define INIT_LINE_LENGTH 128
-
+#define EXIT_STATUS "___EXIT_STATUS___"
 /* Error ids (all are must be negative) */
 #define E_COMMAND_UNKNOWN -1
 #define E_PATH_NOT_EXIST -2
 #define E_ACCESS_FILE -3
 #define E_FILE_RETURN_E -4 /* executed file return error (-1) */
+#define E_GENERAL -5
 
 /**
 * item - General item for env and alias
@@ -52,7 +53,8 @@ size_t get_n_tokens(char *str, char delim);
 /*executers.c -> S*/
 /* - fork
 *  - access */
-int command_executer(char *path, int command_type, int argc, char **argv);
+int command_executer(char *path, int argc, char **argv, char **env);
+char **items2str(Item *items);
 
 /*items_init_free.c -> A*/
 Item *init_env(char **_env); /*the pointer must has a value even if it points to an empty Item*/ 
@@ -62,8 +64,8 @@ void free_items_list(Item *items);
 void name2value(char **str, Item *alias, Item *env);
 
 /*------------items_utilize-------------*/
-size_t get_items_len(Item *items); /*if it's only one empty item then will return 0*/
 char *get_item_value(Item *items, char *name);
+size_t get_items_len(Item *items); /*if it's only one empty item then will return 0*/
 void set_item(Item *items, char *name, char *value); /*if the item is already exist then will change its value*/
 void unset_item(Item *items, char *name);
 
