@@ -17,6 +17,47 @@ char *get_item_value(Item *items, char *name)
 	return (NULL);
 }
 
+char **items2str(Item *items)
+{
+	Item *iter;
+	char **strings;
+	size_t i = 0, len = 0;
+
+	if (!items)
+		return (NULL);
+	iter = items;
+	strings = malloc(sizeof(*strings) * (get_items_len(items) + 1));
+	while (iter)
+	{
+		len = _strlen(iter->name) + _strlen(iter->value) + 2;
+		strings[i] = malloc(len);
+		strings[i][0] = '\0';
+		_strcat(strings[i], iter->name);
+		_strcat(strings[i], "=");
+		_strcat(strings[i], iter->value);
+		++i;
+		iter = iter->next;
+	}
+	strings[i] = NULL;
+	return (strings);
+}
+
+size_t get_items_len(Item *items)
+{
+	Item *iter;
+	size_t len = 0;
+
+	if (!items || (!items->value && !items->name && !items->next))
+		return (0);
+	iter = items;
+	while (iter)
+	{
+		++len;
+		iter = iter->next;
+	}
+	return (len);
+}
+
 void name2value(char **str, Item *env, Item *alias)
 {
 	Item *alias_iter = NULL, *env_iter = NULL;
@@ -37,7 +78,7 @@ void name2value(char **str, Item *env, Item *alias)
 
 	if (value)
 	{
-		len = _strlen(*str) - _strlen(token) + _strlen(value);
+		len = _strlen(*str) - _strlen(token) + _strlen(value) + 1;
 		temp_str = malloc(sizeof(char) * len);
 		temp_str[0] = '\0';
 
@@ -66,7 +107,7 @@ void name2value(char **str, Item *env, Item *alias)
 			value = get_item_value(env, &token[1]);
 			if (value)
 			{
-				len = _strlen(copied_str) - _strlen(token) + _strlen(value);
+				len = _strlen(copied_str) - _strlen(token) + _strlen(value) + 1;
 				temp_str = malloc(sizeof(char) * len);
 				temp_str[0] = '\0';
 
@@ -88,11 +129,6 @@ void name2value(char **str, Item *env, Item *alias)
 		i += _strlen(token) + 1;
 	}
 	free(copied_str);
-}
-
-int get_command_type(char *first_token, Item *env)
-{
-	return (COMMAND_BUILT_IN);
 }
 
 size_t get_n_tokens(char *str, char delim)
