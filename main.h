@@ -29,29 +29,23 @@ typedef struct Item
 	struct Item *next; /*linked list*/
 } Item;
 
-/*---------------Helpers---------------*/
+/*utilz.c -> Samy*/
 char *_strtok(char *str, const char *delim);
 size_t _getline(char **string, size_t *n, FILE *stream);
-size_t _getlineChecker(char **string, size_t *n,
-		__attribute__((unused)) FILE * stream);
 char *get_built_in_path(char *first_token, Item *env);
-
-/*--------------strings--------------*/
-size_t _strlen(char *s);
-int _strcmp(char *s1, char *s2);
-char *_strdup(char *str);
-char *_strcpy(char *dest, char *src);
 char *_strcat(char *dest, char *src);
-unsigned int _strspn(char *str, char *target);
-char *_strpbrk(char *str, char *target);
+char *_strcpy(char *dest, char *src);
+size_t _strlen(char *s);
+
 
 /*handle_commands.c -> A*/
 int handle_commands(char *commands, Item *env, Item *alias, char *program_name);
-char **filter_commands(char *commands); /*Return: list of commands*/
+Item *filter_commands(char *commands, char *program_name); /*Return: list of commands*/
 int handle_command(char **command, Item *env, Item *alias); /*one command only*/
 int handle_separators(int prev_result, char *separator); /*tells if the next command should be executed or not*/
 void handle_error(char *first_token, int error_id, char *program_name);
 int get_command_type(char *first_token);
+char *_substr(char *str, size_t bytes);
 
 /*executers.c -> S*/
 /* - fork
@@ -71,7 +65,7 @@ char *get_item_value(char *name);
 void set_item(char *name, char *value); /*if the item is already exist then will change its value*/
 void unset_item(char *name);
 
-/*----------built_in_functions----------*/
+/* built_in_functions.c -> Samy*/
 int _exit_(int status);
 int _env_();
 int _setenv_(char *name, char *value);
