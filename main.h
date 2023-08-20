@@ -40,6 +40,7 @@ char *_strcpy(char *dest, char *src);
 size_t _strlen(char *s);
 int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
+int _atoi(char *str);
 
 /*handle_commands.c -> A*/
 int handle_commands(char *commands, Item *env, Item *alias, char *program_name);
