@@ -30,6 +30,7 @@ typedef struct Item
 } Item;
 
 /*utilz.c -> Samy*/
+/*--------------Helpers--------------*/
 char *_strtok(char *str, const char *delim);
 size_t _getline(char **string, size_t *n, FILE *stream);
 char *get_built_in_path(char *first_token, Item *env);
@@ -59,7 +60,7 @@ void free_item(Item *item);
 void free_items_list(Item *items);
 void name2value(char **str, Item *alias, Item *env);
 
-/*items_utilz.c -> Samy*/
+/*------------items_utilize-------------*/
 size_t get_items_len(Item *items); /*if it's only one empty item then will return 0*/
 char *get_item_value(char *name);
 void set_item(char *name, char *value); /*if the item is already exist then will change its value*/
@@ -67,7 +68,7 @@ void unset_item(char *name);
 
 /* built_in_functions.c -> Samy*/
 int _exit_(int status);
-int _env_();
+int _env_(Item *env);
 int _setenv_(char *name, char *value);
 int _unsetenv_(char *name);
 int _cd_(char *directory, char *program_name);
