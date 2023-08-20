@@ -77,5 +77,8 @@ int _setenv_(Item *env, char *name, char *value);
 int _unsetenv_(Item *env, char *name);
 int _cd_(Item *env, char *directory, char *program_name);
 
+/*------------Nodes-------------*/
+Item *add_node(Item **head, char *name, char *value);
+
 #endif /*MAIN_H*/
 
