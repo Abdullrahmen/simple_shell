@@ -37,7 +37,8 @@ char *get_built_in_path(char *first_token, Item *env);
 char *_strcat(char *dest, char *src);
 char *_strcpy(char *dest, char *src);
 size_t _strlen(char *s);
-
+int _strcmp(char *s1, char *s2);
+char *_strdup(char *str);
 
 /*handle_commands.c -> A*/
 int handle_commands(char *commands, Item *env, Item *alias, char *program_name);
@@ -62,16 +63,16 @@ void name2value(char **str, Item *alias, Item *env);
 
 /*------------items_utilize-------------*/
 size_t get_items_len(Item *items); /*if it's only one empty item then will return 0*/
-char *get_item_value(char *name);
-void set_item(char *name, char *value); /*if the item is already exist then will change its value*/
-void unset_item(char *name);
+char *get_item_value(Item *items, char *name);
+void set_item(Item *items, char *name, char *value); /*if the item is already exist then will change its value*/
+void unset_item(Item *items, char *name);
 
 /* built_in_functions.c -> Samy*/
 int _exit_(int status);
 int _env_(Item *env);
-int _setenv_(char *name, char *value);
-int _unsetenv_(char *name);
-int _cd_(char *directory, char *program_name);
+int _setenv_(Item *env, char *name, char *value);
+int _unsetenv_(Item *env, char *name);
+int _cd_(Item *env, char *directory, char *program_name);
 
 #endif /*MAIN_H*/
 
