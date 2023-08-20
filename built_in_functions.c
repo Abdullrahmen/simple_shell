@@ -91,3 +91,31 @@ int _setenv_(Item *env, char *name, char *value)
 	}
 	return (0);
 }
+
+/**
+ * add_node - adds a new node at the beginning of a list_t list.
+ * @head: the head of the list
+ * @name: the name of the new variable
+ * @value: the value of the new variable
+ * Return: the address of the new element
+ */
+Item *add_node(Item **head, char *name, char *value)
+{
+	Item *new_head = malloc(sizeof(Item));
+
+	if (!head || !new_head)
+		return (NULL);
+	if (name)
+	{
+		new_head->name = _strdup(name);
+		new_head->value = _strdup(value);
+		if (!new_head->name  || !new_head->value)
+		{
+			free(new_head);
+			return (NULL);
+		}
+	}
+	new_head->next = *head;
+	*head = new_head;
+	return (new_head);
+}
