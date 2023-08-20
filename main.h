@@ -43,12 +43,12 @@ char *_strdup(char *str);
 /*handle_commands.c -> A*/
 int handle_commands(char *commands, Item *env, Item *alias, char *program_name);
 Item *filter_commands(char *commands, char *program_name); /*Return: list of commands*/
-int handle_command(char **command, Item *env, Item *alias); /*one command only*/
-int handle_separators(int prev_result, char *separator); /*tells if the next command should be executed or not*/
-void handle_error(char *first_token, int error_id, char *program_name);
-int get_command_type(char *first_token);
+int handle_command(char *command, Item *env, Item *alias); /*one command only*/
+int handle_separators(int prev_result, char separator); /*tells if the next command should be executed or not*/
+void handle_error(char *command, int error_id, char *program_name);
+int get_command_type(char *first_token, Item *env);
 char *_substr(char *str, size_t bytes);
-
+size_t get_n_tokens(char *str, char delim);
 /*executers.c -> S*/
 /* - fork
 *  - access */

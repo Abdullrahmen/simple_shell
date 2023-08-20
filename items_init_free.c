@@ -106,8 +106,10 @@ Item *init_alias()
 	alias = malloc(sizeof(Item));
 	if (!alias)
 		return (NULL);
-	alias->name = NULL;
-	alias->value = NULL;
+	alias->name = malloc(sizeof(char) * 3);
+	alias->name = "la";
+	alias->value = malloc(sizeof(char) * 6);
+	alias->value = "ls -a";
 	alias->next = NULL;
 	return (alias);
 }
@@ -118,15 +120,17 @@ Item *init_alias()
 */
 void free_items_list(Item *items)
 {
-	free(items);
-	free(items->name);
-	free(items->value);
-	while (items->next)
+	Item *iter = items;
+
+	free(iter->name);
+	free(iter->value);
+	free(iter);
+	while (iter->next)
 	{
-		items = items->next;
-		free(items);
-		free(items->name);
-		free(items->value);
+		iter = iter->next;
+		free(iter->name);
+		free(iter->value);
+		free(iter);
 	}
 }
 
