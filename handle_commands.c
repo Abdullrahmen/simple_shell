@@ -1,5 +1,26 @@
 #include "main.h"
 
+int command_executer(char *path, char **argv, char **env)
+{
+	int pid = 0, status = 0;
+
+	printf("\nCommand executed with:Path = %s\n", path);
+	printf("Result:\n-------------------\n");
+
+	pid = fork();
+	if (!pid)
+	{
+		execve(path, argv, env);
+		exit(EXIT_FAILURE);
+	}
+	waitpid(pid, &status, 0);
+	printf("------------------");
+	if (status)
+		return (E_FILE_RETURN_E);
+	return (0);
+}
+
+
 char *get_item_value(Item *items, char *name)
 {
 	Item *items_iter = NULL;
@@ -133,22 +154,26 @@ void name2value(char **str, Item *env, Item *alias)
 
 size_t get_n_tokens(char *str, char delim)
 {
-	size_t n = 1, i = 0;
+	size_t n = 0, i = 0;
 
+	while (str[i] == delim)
+		++i;
+	if (!str[i])
+		return (0);
 	while (str[i])
 	{
 		if (str[i] == delim)
 		{
 			while (str[i] == delim)
 				++i;
-			++n;
+			if (str[i])
+				++n;
 		}
 		else
 			++i;
 	}
-	return (n);
+	return (n + 1);
 }
-
 
 /**
 * handle_separators - handle separators (tell if the next command should be 

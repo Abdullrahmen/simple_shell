@@ -106,10 +106,8 @@ Item *init_alias()
 	alias = malloc(sizeof(Item));
 	if (!alias)
 		return (NULL);
-	alias->name = malloc(sizeof(char) * 3);
-	/*alias->name = "la";*/
-	alias->value = malloc(sizeof(char) * 6);
-	/*alias->value = "ls -a";*/
+	alias->name = _strdup("la");
+	alias->value = _strdup("ls -a");
 	alias->next = NULL;
 	return (alias);
 }

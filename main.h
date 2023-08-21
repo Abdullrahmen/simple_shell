@@ -5,18 +5,16 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stddef.h>
+#include <sys/wait.h>
 
-#define COMMAND_BUILT_IN 1
-#define COMMAND_PATH 2
-#define COMMAND_OUR_BUILT_IN 3
 #define INIT_LINE_LENGTH 128
 #define EXIT_STATUS "___EXIT_STATUS___"
 /* Error ids (all are must be negative) */
 #define E_COMMAND_UNKNOWN -1
 #define E_PATH_NOT_EXIST -2
-#define E_ACCESS_FILE -3
+#define E_PERMISSION_DENIED -3
 #define E_FILE_RETURN_E -4 /* executed file return error (-1) */
-#define E_GENERAL -5
+#define E_ILLEGAL_EXIT_NUMBER -5
 
 /**
 * item - General item for env and alias
@@ -42,18 +40,18 @@ int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
 
 /*handle_commands.c -> A*/
-int handle_commands(char *commands, Item **env, Item *alias, char *program_name);
+int handle_commands(char *commands, Item **env, Item **alias, char *program_name);
 Item *filter_commands(char *commands, char *program_name); /*Return: list of commands*/
-int handle_command(char *command, Item **env, Item *alias); /*one command only*/
+int handle_command(char *command, Item **env, Item **alias); /*one command only*/
 int handle_separators(int prev_result, char separator); /*tells if the next command should be executed or not*/
 void handle_error(char *command, int error_id, char *program_name);
-int get_command_type(char *first_token, Item *env);
+int check_command_type(char *first_token, Item *env, char **path);
 char *_substr(char *str, size_t bytes);
 size_t get_n_tokens(char *str, char delim);
 /*executers.c -> S*/
 /* - fork
 *  - access */
-int command_executer(char *path, int argc, char **argv, char **env);
+int command_executer(char *path, char **argv, char **env);
 char **items2str(Item *items);
 
 Item *add_node(Item *head, char *name, char *value);
@@ -78,5 +76,6 @@ int _setenv_(Item **env, char *name, char *value);
 int _unsetenv_(Item *env, char *name);
 int _cd_(Item *env, char *directory, char *program_name);
 
+int _atoi(char *str);
 #endif /*MAIN_H*/
 
