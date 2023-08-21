@@ -107,9 +107,9 @@ Item *init_alias()
 	if (!alias)
 		return (NULL);
 	alias->name = malloc(sizeof(char) * 3);
-	alias->name = "la";
+	/*alias->name = "la";*/
 	alias->value = malloc(sizeof(char) * 6);
-	alias->value = "ls -a";
+	/*alias->value = "ls -a";*/
 	alias->next = NULL;
 	return (alias);
 }

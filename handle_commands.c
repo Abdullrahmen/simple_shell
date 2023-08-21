@@ -301,3 +301,81 @@ char *_substr(char *str, size_t bytes)
 	return (substr);
 }
 
+/**
+ * add_node - adds a new node at the beginning of a list_t list.
+ * @head: the head of the list
+ * @name: the name of the new variable
+ * @value: the value of the new variable
+ * Return: the address of the new head
+ */
+Item *add_node(Item *head, char *name, char *value)
+{
+	Item *new_head = malloc(sizeof(Item));
+
+	if (!head || !new_head)
+	{
+		free(new_head);
+		return (NULL);
+	}
+
+	new_head->name = _strdup(name);
+	new_head->value = _strdup(value);
+	if (!new_head->name  || !new_head->value)
+	{
+		free(new_head->name);
+		free(new_head->value);
+		free(new_head);
+		return (NULL);
+	}
+	new_head->next = head;
+	return (new_head);
+}
+
+
+/**
+ * _setenv_ - sets a new environment
+ * @env: A list of items
+ * @name: the name of the new variable
+ * @value: the value of the new variable
+ * Return: 0 on success;
+ */
+int _setenv_(Item **env, char *name, char *value)
+{
+	Item *env_iter = NULL;
+
+	env_iter = *env;
+	while (env_iter)
+	{
+		if (_strcmp(name, env_iter->name))
+		{
+			env_iter = env_iter->next;
+			continue;
+		}
+		free(env_iter->value);
+		env_iter->value = _strdup(value);
+		return (0);
+	}
+	*env = add_node(*env, name, value);
+	return (0);
+}
+
+/**
+ * _env_ - prints the environment variables
+ * @env: the list of the environment variables
+ * Return: 0 on success
+ */
+int _env_(Item *env)
+{
+	Item *env_iter = NULL;
+
+	env_iter = env;
+	while (env_iter)
+	{
+		write(STDOUT_FILENO, env_iter->name, _strlen(env_iter->name));
+		write(STDOUT_FILENO, "=", 1);
+		write(STDOUT_FILENO, env_iter->value, _strlen(env_iter->value));
+		write(STDOUT_FILENO, "\n", 1);
+		env_iter = env_iter->next;
+	}
+	return (0);
+}

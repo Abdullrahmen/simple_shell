@@ -16,7 +16,7 @@ int get_command_type(char *first_token, Item *env)
 * and negative if there is an error (look at error ids)
 * and one otherwise
 */
-int handle_command(char *command, Item *env, Item *alias)
+int handle_command(char *command, Item **env, Item *alias)
 {
 	char **argv = NULL, *path = NULL, **_env = NULL;
 	size_t i = 0, argc = 0;
@@ -35,23 +35,24 @@ int handle_command(char *command, Item *env, Item *alias)
 	}
 	printf("\n=============\n");
 	fflush(stdout);
-	command_type = get_command_type(argv[0], env);
+	command_type = get_command_type(argv[0], *env);
 
 	path = _strdup(argv[0]);
-	_env = items2str(env);
+	_env = items2str(*env);
 	switch(command_type)
-	{/*
-	case COMMAND_BUILT_IN:
+	{
+	/*case COMMAND_BUILT_IN:
 		path = get_built_in_path(argv[0], env);
 	case COMMAND_PATH:
 		command_result = command_executer(path ,argv, argc, _env);
 		break;*/
 	case COMMAND_OUR_BUILT_IN:
-		if (_strcmp(argv[0], "exit"))
+		if (!_strcmp(argv[0], "exit"))
 			if (argv[1])
-				set_item(env, EXIT_STATUS, argv[1]);
+				_setenv_(env, EXIT_STATUS, argv[1]);
 		break;
 	}
+	printf("=%s=", get_item_value(*env, EXIT_STATUS));
 
 	free(path);
 	free(argv);
@@ -77,7 +78,7 @@ int handle_command(char *command, Item *env, Item *alias)
 * Return: zero if the commands tell the shell to exit (exit interactive loop)
 * and one otherwise
 */
-int handle_commands(char *commands, Item *env, Item *alias, char *program_name)
+int handle_commands(char *commands, Item **env, Item *alias, char *program_name)
 {
 	Item *commands_list = NULL, *iter_command;
 	int command_result = 0, exec_next_command = 1;
@@ -92,7 +93,7 @@ int handle_commands(char *commands, Item *env, Item *alias, char *program_name)
 		if (!*iter_command->value)
 			break;
 		printf("=============\nSeparator:(%c)\nTokens:", *iter_command->name);
-		name2value(&iter_command->value, env, alias);
+		name2value(&iter_command->value, *env, alias);
 		command_result = handle_command(iter_command->value, env, alias);
 		if (!command_result)
 		{
@@ -119,9 +120,10 @@ int main(int argc, char **argv, char **_env)
 	int still_loop = 0;
 	Item *env = NULL, *alias = NULL;
 
-	set_item(env, EXIT_STATUS, "0");
 	alias = init_alias();
+/*	alias = malloc(sizeof(Item));*/
 	env = init_env(_env);
+	_setenv_(&env, EXIT_STATUS, "0");
 	if (!alias || !env)
 	{
 		free_items_list(env);
@@ -141,7 +143,7 @@ int main(int argc, char **argv, char **_env)
 			free(buffer);
 			return (0);
 		}
-		handle_commands(buffer, env, alias, argv[0]);
+		handle_commands(buffer, &env, alias, argv[0]);
 	}
 
 	while (still_loop) /*Interactive mode*/
@@ -156,12 +158,14 @@ int main(int argc, char **argv, char **_env)
 			free(buffer);
 			return (0);
 		}
-		still_loop = handle_commands(buffer, env, alias, argv[0]);
+		still_loop = handle_commands(buffer, &env, alias, argv[0]);
 	}
 	still_loop = atoi(get_item_value(env, EXIT_STATUS));
+	printf("\nReturn value: %i - %s\n", still_loop, get_item_value(env, EXIT_STATUS));
 	free_items_list(env);
 	free_items_list(alias);
 	free(buffer);
+	printf("\nReturn value: %i\n", still_loop);
 	return (still_loop);
 }
 

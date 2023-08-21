@@ -40,14 +40,11 @@ char *_strcpy(char *dest, char *src);
 size_t _strlen(char *s);
 int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
-unsigned int _strspn(char *str, char *target);
-char *_strpbrk(char *str, char *target);
-int _atoi(char *str);
 
 /*handle_commands.c -> A*/
-int handle_commands(char *commands, Item *env, Item *alias, char *program_name);
+int handle_commands(char *commands, Item **env, Item *alias, char *program_name);
 Item *filter_commands(char *commands, char *program_name); /*Return: list of commands*/
-int handle_command(char *command, Item *env, Item *alias); /*one command only*/
+int handle_command(char *command, Item **env, Item *alias); /*one command only*/
 int handle_separators(int prev_result, char separator); /*tells if the next command should be executed or not*/
 void handle_error(char *command, int error_id, char *program_name);
 int get_command_type(char *first_token, Item *env);
@@ -58,6 +55,8 @@ size_t get_n_tokens(char *str, char delim);
 *  - access */
 int command_executer(char *path, int argc, char **argv, char **env);
 char **items2str(Item *items);
+
+Item *add_node(Item *head, char *name, char *value);
 
 /*items_init_free.c -> A*/
 Item *init_env(char **_env); /*the pointer must has a value even if it points to an empty Item*/ 
@@ -75,12 +74,9 @@ void unset_item(Item *items, char *name);
 /* built_in_functions.c -> Samy*/
 int _exit_(int status);
 int _env_(Item *env);
-int _setenv_(Item *env, char *name, char *value);
+int _setenv_(Item **env, char *name, char *value);
 int _unsetenv_(Item *env, char *name);
 int _cd_(Item *env, char *directory, char *program_name);
-
-/*------------Nodes-------------*/
-Item *add_node(Item **head, char *name, char *value);
 
 #endif /*MAIN_H*/
 
