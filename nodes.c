@@ -7,7 +7,7 @@
  * @value: the value of the node
  * Return: the address of the new element
  */
-Item *add_node(Item **head, char *name, char *value)
+Item *add_node(Item *head, char *name, char *value)
 {
 	Item *new_head = malloc(sizeof(Item));
 
@@ -25,8 +25,7 @@ Item *add_node(Item **head, char *name, char *value)
 		free(new_head);
 		return (NULL);
 	}
-	new_head->next = *head;
-	*head = new_head;
+	new_head->next = head;
 	return (new_head);
 }
 
