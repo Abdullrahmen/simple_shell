@@ -15,6 +15,9 @@
 #define E_PERMISSION_DENIED -3
 #define E_FILE_RETURN_E -4 /* executed file return error (-1) */
 #define E_ILLEGAL_EXIT_NUMBER -5
+#define E_DIROCTORY_UNFOUND -6
+#define E_INVALID_ENV_NAME -7
+#define E_INVALID_ARGUMENTS -8
 
 /**
 * item - General item for env and alias
