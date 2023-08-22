@@ -263,11 +263,11 @@ Item *filter_commands(char *commands, char *program_name, unsigned int line_numb
 	size_t start = 0, end = 0;
 
 	iter = uint2str(line_number);
-	error_msg = malloc(sizeof(char) *(_strlen(program_name) + _strlen(iter) + 100));
+	error_msg = malloc(sizeof(char) *(_strlen(program_name) + _strlen(iter)));
 	_strcpy(error_msg, program_name);
 	_str_concat(&error_msg, ": ");
 	_str_concat(&error_msg, iter);
-	_strcat(error_msg, ": Syntax error: \"");
+	_str_concat(&error_msg, ": Syntax error: \"");
 	free(iter);
 	iter = skip_spaces(commands);
 	if (!iter[0])
@@ -344,7 +344,7 @@ Item *filter_commands(char *commands, char *program_name, unsigned int line_numb
 				return (NULL);
 			}
 			else
-			*iter2->name = ';';
+				*iter2->name = ';';
 		
 		}
 		if (iter[end] == '#' || iter[end] == '\n')

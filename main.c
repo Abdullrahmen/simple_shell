@@ -193,8 +193,8 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 
 	alias = init_alias();
 	env = init_env(_env);
-	/*_setenv_(&env, EXIT_STATUS, "0");
-	_setenv_(&env, "PATH", "/bin");*/
+	_setenv_(&env, EXIT_STATUS, "0");
+	_setenv_(&env, "PATH", "/bin");
 	if (!alias || !env)
 	{
 		free_items_list(env);
@@ -224,6 +224,7 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 		bytes_read = _getline(&buffer, &buffer_size, stdin);
 		if (bytes_read == ULLONG_MAX)
 		{
+			write(1, "\n", 1);
 			free_items_list(env);
 			free_items_list(alias);
 			free(buffer);
@@ -235,7 +236,6 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 		buffer = NULL;
 	}
 	still_loop = _atoi(get_item_value(env, EXIT_STATUS));
-	printf("\nReturn value: %i - %s\n", still_loop, get_item_value(env, EXIT_STATUS));
 	free_items_list(env);
 	free_items_list(alias);
 	return (still_loop);
