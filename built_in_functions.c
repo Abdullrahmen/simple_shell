@@ -73,36 +73,6 @@ int _env_(Item *env)
 }
 
 /**
- * _setenv_ - sets a new environment
- * @env: A list of items
- * @name: the name of the new variable
- * @value: the value of the new variable
- * Return: 0 on success;
- */
-int _setenv_(Item **env, char *name, char *value)
-{
-	Item *env_iter = NULL;
-
-	env_iter = *env;
-	if (!env_iter || !name)
-		write(STDERR_FILENO, "setenv ERROR", 13);
-	env_iter->name = name;
-	env_iter->value = value;
-	while (env_iter)
-	{
-		if (_strcmp(name, env_iter->name))
-		{
-			env_iter = env_iter->next;
-			continue;
-		}
-		env_iter->value = _strdup(value);
-		return (0);
-	}
-	*env = add_node(*env, name, value);
-	return (0);
-}
-
-/**
  * _unsetenv_ - unsets the environment variable
  * @env: A list of the environment variable
  * @name: the name of the variable
