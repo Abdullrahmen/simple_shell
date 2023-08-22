@@ -29,16 +29,32 @@ void _str_concat(char **dest, char *src)
 int check_command_type(char *first_token, Item *env, char **path)
 {
 	int is_command = 0;
-
+	char *next_path = NULL, *g_path = NULL;
+	size_t i = 0;
 
 	if (first_token[0] == '/')
 		*path = _strdup(first_token);
 	else
 	{
-		*path = _strdup(get_item_value(env, "PATH"));
-		_str_concat(path, "/");
-		_str_concat(path, first_token);
+		g_path = _strdup(get_item_value(env, "PATH"));
+		next_path = _strtok(g_path, ":");
+		while (next_path)
+		{
+			*path = _strdup(next_path);
+			_str_concat(path, "/");
+			_str_concat(path, first_token);
+			next_path = _strtok(NULL, ":");
+			if (access(*path, F_OK && X_OK) == -1)
+			{
+				if (!next_path)
+					break;
+				free(*path);
+			}
+			else
+				break;
+		}
 		is_command = 1;
+		free(g_path);
 	}
 
 	if (access(*path, F_OK) == -1)
@@ -75,6 +91,36 @@ int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit)
 		*is_exit = 1;
 		return (1);
 	}
+	if (!_strcmp(argv[0], "env"))
+	{
+		if (!argv[1])
+			_env_(*env);
+		_setenv_(env, LAST_EXIT_STATUS, "0");
+		return (1);
+	}
+	if (!_strcmp(argv[0], "cd"))
+	{
+		if (_cd_(*env, argv[1]) < 0)
+			return (E_DIRECTORY_UNFOUND);
+		_setenv_(env, LAST_EXIT_STATUS, "0");
+		return (1);
+	}
+	if (!_strcmp(argv[0], "setenv"))
+	{
+		if (!argv[1] || !argv[2])
+			return (E_INVALID_ARGUMENTS);
+		if (!*argv[1] || !argv[2])
+			return (E_INVALID_ARGUMENTS);
+		if (_setenv_(env, argv[1], argv[2]))
+			return (E_INVALID_ARGUMENTS);
+		_setenv_(env, LAST_EXIT_STATUS, "0");
+		return (1);
+	}
+	if (!_strcmp(argv[0], "alias"))
+	{
+		_alias_(alias, env, argv);
+		return (1);
+	}
 	return (0);
 }
 
@@ -89,7 +135,7 @@ int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit)
 */
 int handle_command(char *command, Item **env, Item **alias, char *program_name, unsigned int line_number)
 {
-	char **argv = NULL, *path = NULL, **_env = NULL;
+	char **argv = NULL, *path = NULL;
 	size_t i = 0;
 	int command_type = 0, command_result = 0, is_exit = 0, error_id = 0;
 
@@ -110,14 +156,8 @@ int handle_command(char *command, Item **env, Item **alias, char *program_name, 
 		command_type = check_command_type(argv[0], *env, &path);
 		if (command_type >= 0)
 		{
-			_env = items2str(*env);
 
-			command_result = command_executer(path, argv, _env);
-
-			i = 0;
-			while (_env[i])
-				free(_env[i++]);
-			free(_env);
+			command_result = command_executer(path, argv, env);
 			free(path);
 		}
 	}
@@ -134,7 +174,7 @@ int handle_command(char *command, Item **env, Item **alias, char *program_name, 
 		free(argv);
 		return (0);
 	}
-	handle_error(argv, error_id, program_name, line_number);
+	handle_errors(argv, error_id, program_name, line_number, env);
 	free(argv);
 	if (error_id < 0)
 		return (error_id);
@@ -194,7 +234,7 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 	alias = init_alias();
 	env = init_env(_env);
 	_setenv_(&env, EXIT_STATUS, "0");
-	_setenv_(&env, "PATH", "/bin");
+	_setenv_(&env, LAST_EXIT_STATUS, "0");
 	if (!alias || !env)
 	{
 		free_items_list(env);

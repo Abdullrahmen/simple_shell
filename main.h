@@ -9,13 +9,14 @@
 
 #define INIT_LINE_LENGTH 128
 #define EXIT_STATUS "___EXIT_STATUS___"
+#define LAST_EXIT_STATUS "___LAST_EXIT_STATUS___"
 /* Error ids (all are must be negative) */
 #define E_COMMAND_UNKNOWN -1
 #define E_PATH_NOT_EXIST -2
 #define E_PERMISSION_DENIED -3
 #define E_FILE_RETURN_E -4 /* executed file return error (-1) */
 #define E_ILLEGAL_EXIT_NUMBER -5
-#define E_DIROCTORY_UNFOUND -6
+#define E_DIRECTORY_UNFOUND -6
 #define E_INVALID_ENV_NAME -7
 #define E_INVALID_ARGUMENTS -8
 
@@ -49,14 +50,16 @@ int handle_commands(char *commands, Item **env, Item **alias, char *program_name
 Item *filter_commands(char *commands, char *program_name, unsigned int line_numbet); /*Return: list of commands*/
 int handle_command(char *command, Item **env, Item **alias, char *program_name, unsigned int line_number); /*one command only*/
 int handle_separators(int prev_result, char separator); /*tells if the next command should be executed or not*/
-void handle_error(char **argv, int error_id, char *program_name, unsigned int line_number);
+void handle_errors(char **argv, int error_id, char *program_name, unsigned int line_number, Item **env);
 int check_command_type(char *first_token, Item *env, char **path);
 char *_substr(char *str, size_t bytes);
 size_t get_n_tokens(char *str, char delim);
+int _alias_(Item **alias, Item **env, char **argv);
+char *copy_till_delim(char *str, char delim);
 /*executers.c -> S*/
 /* - fork
 *  - access */
-int command_executer(char *path, char **argv, char **env);
+int command_executer(char *path, char **argv, Item **env);
 char **items2str(Item *items);
 /*----------------------nodes-----------------------*/
 Item *add_node(Item *head, char *name, char *value);
@@ -80,7 +83,7 @@ int _exit_(int status);
 int _env_(Item *env);
 int _setenv_(Item **env, char *name, char *value);
 int _unsetenv_(Item *env, char *name);
-int _cd_(Item *env, char *directory, char *program_name);
+int _cd_(Item *env, char *directory);
 
 #endif /*MAIN_H*/
 

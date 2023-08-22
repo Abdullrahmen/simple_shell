@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 char *uint2str(unsigned int line_number)
 {
 	char *str = NULL;
@@ -29,7 +30,7 @@ char *uint2str(unsigned int line_number)
 	return (str);
 }
 
-void handle_error(char **argv, int error_id, char *program_name, unsigned int line_number)
+void handle_errors(char **argv, int error_id, char *program_name, unsigned int line_number, Item **env)
 {
 	char *error_msg = NULL, *str = NULL;
 
@@ -48,17 +49,29 @@ void handle_error(char **argv, int error_id, char *program_name, unsigned int li
 	{
 	case (E_COMMAND_UNKNOWN):
 	case (E_PATH_NOT_EXIST):
+	case (E_INVALID_ARGUMENTS):
 		_str_concat(&error_msg, argv[0]);
 		_str_concat(&error_msg, ": not found");
+		_setenv_(env, LAST_EXIT_STATUS, "127");
 		break;
 	case (E_PERMISSION_DENIED):
 		_str_concat(&error_msg, argv[0]);
 		_str_concat(&error_msg, ": Permission denied");
+		_setenv_(env, LAST_EXIT_STATUS, "127");
 		break;
 	case (E_ILLEGAL_EXIT_NUMBER):
 		_str_concat(&error_msg, argv[0]);
 		_str_concat(&error_msg, ": Illegal number: ");
 		_str_concat(&error_msg, argv[1]);
+		_setenv_(env, LAST_EXIT_STATUS, "2");
+		break;
+	case (E_DIRECTORY_UNFOUND):
+		_str_concat(&error_msg, argv[0]);
+		_str_concat(&error_msg, ": can't ");
+		_str_concat(&error_msg, argv[0]);
+		_str_concat(&error_msg, " to ");
+		_str_concat(&error_msg, argv[1]);
+		_setenv_(env, LAST_EXIT_STATUS, "2");
 		break;
 	}
 	_str_concat(&error_msg, "\n");
@@ -88,21 +101,32 @@ int handle_separators(int prev_result, char separator)
 	return (1);
 }
 
-int command_executer(char *path, char **argv, char **env)
+int command_executer(char *path, char **argv, Item **env)
 {
-	int pid = 0, status = 0;
+	char **_env = NULL, *tmp = NULL;
+	size_t i = 0;
+	int pid = 0;
+	unsigned int status = 0;
 
 	/*printf("\nCommand executed with:Path = %s\n", path);
 	printf("Result:\n-------------------\n");*/
-
+	_env = items2str(*env);
 	pid = fork();
 	if (!pid)
 	{
-		execve(path, argv, env);
+		execve(path, argv, _env);
 		exit(EXIT_FAILURE);
 	}
 	waitpid(pid, &status, 0);
-	/*printf("------------------");*/
+	tmp = uint2str(status);
+	_setenv_(env, LAST_EXIT_STATUS, tmp);
+	free(tmp);
+
+	i = 0;
+	while (_env[i])
+		free(_env[i++]);
+	free(_env);
+
 	if (status)
 		return (E_FILE_RETURN_E);
 	return (0);
@@ -191,7 +215,12 @@ void name2value(char **str, Item *env, Item *alias)
 				i += _strlen(token);
 				continue;
 			}
-			value = get_item_value(env, &token[1]);
+			if (token[1] == '$' && !token[2])
+				value = uint2str(getpid());
+			else if (token[1] == '?' && !token[2])
+				value = _strdup(get_item_value(env, LAST_EXIT_STATUS));
+			else
+				value = _strdup(get_item_value(env, &token[1]));
 			if (value)
 			{
 				len = _strlen(copied_str) - _strlen(token) + _strlen(value) + 1;
@@ -209,6 +238,7 @@ void name2value(char **str, Item *env, Item *alias)
 
 				i += _strlen(value);
 				free(copied_str);
+				free(value);
 				copied_str = _strdup(*str);
 				continue;
 			}

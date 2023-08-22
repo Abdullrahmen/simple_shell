@@ -1,4 +1,59 @@
 #include "main.h"
+
+/**
+ * _env_ - prints the environment variables
+ * @env: the list of the environment variables
+ * Return: 0 on success
+ */
+int _alias_(Item **alias, Item **env, char **argv)
+{
+	Item *iter = NULL;
+	char *str_iter = NULL, *name = NULL, *value = NULL;
+	size_t i = 1, j = 0;
+	int is_error = 0;
+
+	if (_strcmp(argv[0], "alias"))
+		return (1);
+	
+	if (!argv[1] || !argv[1][0]) /*alias only*/
+	{
+		iter = *alias;
+		while (iter)
+		{
+			write(STDOUT_FILENO, iter->name, _strlen(iter->name));
+			write(STDOUT_FILENO, "='", 2);
+			write(STDOUT_FILENO, iter->value, _strlen(iter->value));
+			write(STDOUT_FILENO, "'\n", 2);
+			iter = iter->next;
+		}
+		return (0);
+	}
+
+	str_iter = argv[i];
+	while (str_iter)
+	{
+		name = copy_till_delim(str_iter, '=');
+		if (name)
+		{
+			j = 0;
+			while (str_iter[j] != '=')
+				++j;
+			value = copy_till_delim(&str_iter[j + 1], '\'');
+			if (value)
+				_setenv_(alias, name, value);
+			else
+				is_error = 1;
+			free(value);
+		}
+		free(name);
+		++i;
+		str_iter = argv[i];
+	}
+	if (is_error)
+		_setenv_(env, LAST_EXIT_STATUS, "1");
+	return (0);
+}
+
 /**
  * add_node - adds a new node at the beginning of a list_t list.
  * @head: the head of the list
