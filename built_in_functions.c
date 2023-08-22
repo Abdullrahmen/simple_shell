@@ -9,10 +9,9 @@
  * _cd_ - changes the current directory
  * @env: A list of environment variables
  * @directory: the directory required to change to it.
- * @program_name: the name of the program.
  * Return: 0 on success
  */
-int _cd_(Item *env, char *directory, char *program_name)
+int _cd_(Item *env, char *directory)
 {
 	Item *env_iter = NULL;
 	char cwd[1024];
@@ -20,34 +19,20 @@ int _cd_(Item *env, char *directory, char *program_name)
 
 	env_iter = env;
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
-	{
-		write(STDERR_FILENO, "getcwd() error", 15);
-		return (1);
-	}
+		return (0);
+
 	if (directory == NULL || _strcmp(directory, "~") == 0)
 		directory = get_item_value(env, "HOME");
 	else if (_strcmp(directory, "-") == 0)
 		directory = get_item_value(env, "OLDPWD");
+
 	if (chdir(directory) == -1)
-	{
-		write(STDERR_FILENO, program_name, _strlen(program_name));
-		write(STDERR_FILENO, ": 1", 3);
-		write(STDERR_FILENO, ": ", 2);
-		write(STDERR_FILENO, "cd", 2);
-		write(STDERR_FILENO, ": can't cd to ", 14);
-		write(STDERR_FILENO, directory, _strlen(directory));
-		write(STDERR_FILENO, "\n", 1);
-		return (1);
-	}
-	else
-	{
-		_setenv_(&env, "OLDPWD", cwd);
-		if (getcwd(cwd, sizeof(cwd)) == NULL)
-		{
-			write(STDERR_FILENO, "getcwd() error", 15);
-			return (1);
-		}
-	}
+		return (E_DIRECTORY_UNFOUND);
+
+	_setenv_(&env, "OLDPWD", cwd);
+	if (getcwd(cwd, sizeof(cwd)) == NULL)
+		return (0);
+
 	return (0);
 }
 
