@@ -81,15 +81,15 @@ int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit)
 * @command: the command
 * @env: the environment list
 * @alias: the alias list
+* @line_number: line number (used in errors)
 * Return: zero if the command tell the shell to exit (exit interactive loop)
-* and negative if there is an error (look at error ids)
 * and one otherwise
 */
-int handle_command(char *command, Item **env, Item **alias)
+int handle_command(char *command, Item **env, Item **alias, char *program_name, unsigned int line_number)
 {
 	char **argv = NULL, *path = NULL, **_env = NULL;
 	size_t i = 0;
-	int command_type = 0, command_result = 0, is_exit = 0;
+	int command_type = 0, command_result = 0, is_exit = 0, error_id = 0;
 
 	if (!command || !*command)
 		return (1);
@@ -97,7 +97,7 @@ int handle_command(char *command, Item **env, Item **alias)
 	argv[0] = _strtok(command, " ");
 	while (argv[i])
 	{
-		printf("%s > ", argv[i]);
+		/*printf("%s > ", argv[i]);*/
 		++i;
 		argv[i] = _strtok(NULL, " ");
 	}
@@ -106,27 +106,36 @@ int handle_command(char *command, Item **env, Item **alias)
 	if (!command_type)
 	{
 		command_type = check_command_type(argv[0], *env, &path);
-		_env = items2str(*env);
+		if (command_type >= 0)
+		{
+			_env = items2str(*env);
 
-		command_result = command_executer(path, argv, _env);
+			command_result = command_executer(path, argv, _env);
 
-		i = 0;
-		while (_env[i])
-			free(_env[i++]);
-		free(_env);
-		free(path);
+			i = 0;
+			while (_env[i])
+				free(_env[i++]);
+			free(_env);
+			free(path);
+		}
 	}
 
-	free(argv);
-	printf("End result\n");
-	printf("=============\n\n");
+	/*printf("End result\n");
+	printf("=============\n\n");*/
 	fflush(stdout);
 	if (command_type < 0)
-		return (command_type);
+		error_id = command_type;
 	if (command_result)
-		return (E_FILE_RETURN_E);
+		error_id = E_FILE_RETURN_E;
 	if (is_exit)
+	{
+		free(argv);
 		return (0);
+	}
+	handle_error(argv, error_id, program_name, line_number);
+	free(argv);
+	if (error_id < 0)
+		return (error_id);
 	return (1);
 }
 
@@ -139,7 +148,7 @@ int handle_command(char *command, Item **env, Item **alias)
 * Return: zero if the commands tell the shell to exit (exit interactive loop)
 * and one otherwise
 */
-int handle_commands(char *commands, Item **env, Item **alias, char *program_name)
+int handle_commands(char *commands, Item **env, Item **alias, char *program_name, unsigned int line_number)
 {
 	Item *commands_list = NULL, *iter_command;
 	int command_result = 0, exec_next_command = 1;
@@ -152,17 +161,15 @@ int handle_commands(char *commands, Item **env, Item **alias, char *program_name
 	{
 		if (!*iter_command->value)
 			break;
-		printf("=============\nSeparator:(%c)\nTokens:", *iter_command->name);
-		fflush(stdout);
+		/*printf("=============\nSeparator:(%c)\nTokens:", *iter_command->name);
+		fflush(stdout);*/
 		name2value(&iter_command->value, *env, *alias);
-		command_result = handle_command(iter_command->value, env, alias);
+		command_result = handle_command(iter_command->value, env, alias, program_name, line_number);
 		if (!command_result)
 		{
 			free_items_list(commands_list);
 			return (0);
 		}
-		if (command_result < 0)
-			printf("\nThere is an error with id: %i\n", command_result);
 			/*handle_error(iter_command->value, command_result, program_name);*/
 		exec_next_command = handle_separators(command_result, *iter_command->name);
 		iter_command = iter_command->next;
@@ -178,6 +185,7 @@ int main(int argc, char **argv, char **_env)
 {
 	char *buffer = NULL;
 	size_t buffer_size = 0;
+	unsigned int line_number = 1;
 	ssize_t bytes_read = 0;
 	int still_loop = 0;
 	Item *env = NULL, *alias = NULL;
@@ -205,7 +213,7 @@ int main(int argc, char **argv, char **_env)
 			free(buffer);
 			return (0);
 		}
-		handle_commands(buffer, &env, &alias, argv[0]);
+		handle_commands(buffer, &env, &alias, argv[0], line_number);
 	}
 
 	while (still_loop) /*Interactive mode*/
@@ -220,7 +228,8 @@ int main(int argc, char **argv, char **_env)
 			free(buffer);
 			return (0);
 		}
-		still_loop = handle_commands(buffer, &env, &alias, argv[0]);
+		still_loop = handle_commands(buffer, &env, &alias, argv[0], line_number);
+		++line_number;
 	}
 	still_loop = _atoi(get_item_value(env, EXIT_STATUS));
 	printf("\nReturn value: %i - %s\n", still_loop, get_item_value(env, EXIT_STATUS));

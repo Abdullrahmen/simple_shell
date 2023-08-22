@@ -1,11 +1,99 @@
 #include "main.h"
 
+char *uint2str(unsigned int line_number)
+{
+	char *str = NULL;
+	unsigned int temp = 0, len = 0;
+
+	if (!line_number)
+		return (_strdup("0"));
+
+	temp = line_number;
+	while (temp)
+	{
+		temp /= 10;
+		++len;
+	}
+	str = malloc(sizeof(char) * (len + 1));
+	if (!str)
+		return (NULL);
+	temp = line_number;
+	str[len] = '\0';
+	while (temp)
+	{
+		str[len - 1] = (temp % 10) + '0';
+		--len;
+		temp /= 10;
+	}
+	
+	return (str);
+}
+
+void handle_error(char **argv, int error_id, char *program_name, unsigned int line_number)
+{
+	char *error_msg = NULL, *str = NULL;
+
+	/*printf("\nThere is an error with id: %i\n", error_id);*/
+	if (!argv || !*argv || !**argv || error_id >= 0 || !line_number)
+		return;
+	if (error_id == E_FILE_RETURN_E)
+		return;
+	error_msg = _strdup(program_name);
+	_str_concat(&error_msg, ": ");
+	str = uint2str(line_number);
+	_str_concat(&error_msg, str);
+	_str_concat(&error_msg, ": ");
+	free(str);
+	switch (error_id)
+	{
+	case (E_COMMAND_UNKNOWN):
+	case (E_PATH_NOT_EXIST):
+		_str_concat(&error_msg, argv[0]);
+		_str_concat(&error_msg, ": not found");
+		break;
+	case (E_PERMISSION_DENIED):
+		_str_concat(&error_msg, argv[0]);
+		_str_concat(&error_msg, ": Permission denied");
+		break;
+	case (E_ILLEGAL_EXIT_NUMBER):
+		_str_concat(&error_msg, argv[0]);
+		_str_concat(&error_msg, ": Illegal number: ");
+		_str_concat(&error_msg, argv[1]);
+		break;
+	}
+	_str_concat(&error_msg, "\n");
+	write(STDERR_FILENO, error_msg, _strlen(error_msg));
+	free(error_msg);
+}
+
+/**
+* handle_separators - handle separators (tell if the next command should be 
+* executed or not)
+* @prev_result: previous command result (-number is error, 1 is passed,
+* prev_result shouldn't have the value zero but if it is then will return 0)
+* @separator: the separator between the commands ex. && or || or ;
+* Return: one if the next command should be executed and zero otherwise
+*/
+int handle_separators(int prev_result, char separator)
+{
+	if (separator == ' ')
+		return (0);
+	if (separator == '#')
+		return (0);
+
+	if (prev_result <= 0 && separator == '&')
+		return (0);
+	if (prev_result == 1 && separator == '|')
+		return (0);
+	return (1);
+}
+
 int command_executer(char *path, char **argv, char **env)
 {
 	int pid = 0, status = 0;
 
-	printf("\nCommand executed with:Path = %s\n", path);
-	printf("Result:\n-------------------\n");
+	/*printf("\nCommand executed with:Path = %s\n", path);
+	printf("Result:\n-------------------\n");*/
 
 	pid = fork();
 	if (!pid)
@@ -14,7 +102,7 @@ int command_executer(char *path, char **argv, char **env)
 		exit(EXIT_FAILURE);
 	}
 	waitpid(pid, &status, 0);
-	printf("------------------");
+	/*printf("------------------");*/
 	if (status)
 		return (E_FILE_RETURN_E);
 	return (0);
@@ -174,20 +262,6 @@ size_t get_n_tokens(char *str, char delim)
 	}
 	return (n + 1);
 }
-
-/**
-* handle_separators - handle separators (tell if the next command should be 
-* executed or not)
-* @prev_result: previous command result (-number is error, 1 is passed,
-* prev_result shouldn't have the value zero but if it is then will return 0)
-* @separator: the separator between the commands ex. && or || or ;
-* Return: one if the next command should be executed and zero otherwise
-*/
-int handle_separators(int prev_result, char separator)
-{
-	return (1);
-}
-
 char *skip_spaces(char *str)
 {
 	size_t i = 0;
