@@ -1,6 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
-
+#include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -46,7 +46,7 @@ int _atoi(char *str);
 
 /*handle_commands.c -> A*/
 int handle_commands(char *commands, Item **env, Item **alias, char *program_name, unsigned int line_number);
-Item *filter_commands(char *commands, char *program_name); /*Return: list of commands*/
+Item *filter_commands(char *commands, char *program_name, unsigned int line_numbet); /*Return: list of commands*/
 int handle_command(char *command, Item **env, Item **alias, char *program_name, unsigned int line_number); /*one command only*/
 int handle_separators(int prev_result, char separator); /*tells if the next command should be executed or not*/
 void handle_error(char **argv, int error_id, char *program_name, unsigned int line_number);

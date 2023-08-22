@@ -42,8 +42,8 @@ size_t _getline(char **string, size_t *n, FILE *stream)
 	while (1)
 	{
 		nchars = read(STDIN_FILENO, temp, size);
-		if (nchars == -1)
-			return (-1);
+		if (nchars == ULLONG_MAX)
+			return (ULLONG_MAX);
 		else if (nchars == 0)
 			break;
 		temp += nchars;

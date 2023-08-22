@@ -108,24 +108,6 @@ int command_executer(char *path, char **argv, char **env)
 	return (0);
 }
 
-
-char *get_item_value(Item *items, char *name)
-{
-	Item *items_iter = NULL;
-
-	items_iter = items;
-	if (!name)
-		return (NULL);
-	while (items_iter)
-	{
-		if (!_strcmp(items_iter->name, name))
-			return (items_iter->value);
-		else
-			items_iter = items_iter->next;
-	}
-	return (NULL);
-}
-
 char **items2str(Item *items)
 {
 	Item *iter;
@@ -169,16 +151,12 @@ size_t get_items_len(Item *items)
 
 void name2value(char **str, Item *env, Item *alias)
 {
-	Item *alias_iter = NULL, *env_iter = NULL;
 	char *value = NULL, *token = NULL, *temp_str = NULL, *sub_str = NULL, *copied_str = NULL;
-	int is_equal = 0;
 	size_t i = 0, len = 0;
 
 	if (!str || !*str || !**str)
 		return;
 
-	alias_iter = alias;
-	env_iter = env;
 	copied_str = _strdup(*str);
 	token = _strtok(copied_str, " ");
 	if (!token)
@@ -278,14 +256,19 @@ char *skip_spaces(char *str)
 * or NULL if error
 * ex. ls;ls||ls -> [ls, ;, ls, ||, ls]
 */
-Item *filter_commands(char *commands, char *program_name)
+Item *filter_commands(char *commands, char *program_name, unsigned int line_number)
 {
 	Item *commands_list, *iter2;
-	char *iter, error_msg[_strlen(program_name) + 100];
+	char *iter, *error_msg;
 	size_t start = 0, end = 0;
 
+	iter = uint2str(line_number);
+	error_msg = malloc(sizeof(char) *(_strlen(program_name) + _strlen(iter) + 100));
 	_strcpy(error_msg, program_name);
-	_strcat(error_msg, ": 1: Syntax error: \"");
+	_str_concat(&error_msg, ": ");
+	_str_concat(&error_msg, iter);
+	_strcat(error_msg, ": Syntax error: \"");
+	free(iter);
 	iter = skip_spaces(commands);
 	if (!iter[0])
 		return (NULL);
@@ -331,6 +314,7 @@ Item *filter_commands(char *commands, char *program_name)
 			++end;
 
 		if (iter[end] == '|')
+		{
 			if (iter[end + 1] == '|')
 				*iter2->name = '|';
 			else
@@ -339,7 +323,9 @@ Item *filter_commands(char *commands, char *program_name)
 				write(STDERR_FILENO, "| is not supported yet\n", 24);
 				return (NULL);
 			}
+		}
 		if (iter[end] == '&')
+		{
 			if (iter[end + 1] == '&')
 				*iter2->name = '&';
 			else
@@ -348,7 +334,9 @@ Item *filter_commands(char *commands, char *program_name)
 				write(STDERR_FILENO, "& is not supported yet\n", 24);
 				return (NULL);
 			}
+		}
 		if (iter[end] == ';')
+		{
 			if(iter[end + 1] == ';')
 			{
 				free_items_list(commands_list);
@@ -358,6 +346,7 @@ Item *filter_commands(char *commands, char *program_name)
 			else
 			*iter2->name = ';';
 		
+		}
 		if (iter[end] == '#' || iter[end] == '\n')
 		{
 			iter2->value = _substr(&iter[start], end - start);
@@ -400,81 +389,3 @@ char *_substr(char *str, size_t bytes)
 	return (substr);
 }
 
-/**
- * add_node - adds a new node at the beginning of a list_t list.
- * @head: the head of the list
- * @name: the name of the new variable
- * @value: the value of the new variable
- * Return: the address of the new head
- */
-Item *add_node(Item *head, char *name, char *value)
-{
-	Item *new_head = malloc(sizeof(Item));
-
-	if (!head || !new_head)
-	{
-		free(new_head);
-		return (NULL);
-	}
-
-	new_head->name = _strdup(name);
-	new_head->value = _strdup(value);
-	if (!new_head->name  || !new_head->value)
-	{
-		free(new_head->name);
-		free(new_head->value);
-		free(new_head);
-		return (NULL);
-	}
-	new_head->next = head;
-	return (new_head);
-}
-
-
-/**
- * _setenv_ - sets a new environment
- * @env: A list of items
- * @name: the name of the new variable
- * @value: the value of the new variable
- * Return: 0 on success;
- */
-int _setenv_(Item **env, char *name, char *value)
-{
-	Item *env_iter = NULL;
-
-	env_iter = *env;
-	while (env_iter)
-	{
-		if (_strcmp(name, env_iter->name))
-		{
-			env_iter = env_iter->next;
-			continue;
-		}
-		free(env_iter->value);
-		env_iter->value = _strdup(value);
-		return (0);
-	}
-	*env = add_node(*env, name, value);
-	return (0);
-}
-
-/**
- * _env_ - prints the environment variables
- * @env: the list of the environment variables
- * Return: 0 on success
- */
-int _env_(Item *env)
-{
-	Item *env_iter = NULL;
-
-	env_iter = env;
-	while (env_iter)
-	{
-		write(STDOUT_FILENO, env_iter->name, _strlen(env_iter->name));
-		write(STDOUT_FILENO, "=", 1);
-		write(STDOUT_FILENO, env_iter->value, _strlen(env_iter->value));
-		write(STDOUT_FILENO, "\n", 1);
-		env_iter = env_iter->next;
-	}
-	return (0);
-}

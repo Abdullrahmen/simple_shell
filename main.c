@@ -28,7 +28,7 @@ void _str_concat(char **dest, char *src)
 */
 int check_command_type(char *first_token, Item *env, char **path)
 {
-	int command_type = 0, is_command = 0;
+	int is_command = 0;
 
 
 	if (first_token[0] == '/')
@@ -42,10 +42,12 @@ int check_command_type(char *first_token, Item *env, char **path)
 	}
 
 	if (access(*path, F_OK) == -1)
+	{
 		if (is_command)
 			return (E_COMMAND_UNKNOWN);
 		else
 			return (E_PATH_NOT_EXIST);
+	}
 	if (access(*path, X_OK) == -1)
 		return (E_PERMISSION_DENIED);
 	return (1);
@@ -153,7 +155,7 @@ int handle_commands(char *commands, Item **env, Item **alias, char *program_name
 	Item *commands_list = NULL, *iter_command;
 	int command_result = 0, exec_next_command = 1;
 
-	commands_list = filter_commands(commands, program_name);
+	commands_list = filter_commands(commands, program_name, line_number);
 	if (!commands_list)
 		return (1);
 	iter_command = commands_list;
@@ -181,19 +183,18 @@ int handle_commands(char *commands, Item **env, Item **alias, char *program_name
 /**
 * main - The main function
 */
-int main(int argc, char **argv, char **_env)
+int main(__attribute__((unused))int argc, char **argv, char **_env)
 {
 	char *buffer = NULL;
-	size_t buffer_size = 0;
+	size_t buffer_size = 0, bytes_read = 0;
 	unsigned int line_number = 1;
-	ssize_t bytes_read = 0;
 	int still_loop = 0;
 	Item *env = NULL, *alias = NULL;
 
 	alias = init_alias();
 	env = init_env(_env);
-	_setenv_(&env, EXIT_STATUS, "0");
-	_setenv_(&env, "PATH", "/bin");
+	/*_setenv_(&env, EXIT_STATUS, "0");
+	_setenv_(&env, "PATH", "/bin");*/
 	if (!alias || !env)
 	{
 		free_items_list(env);
@@ -205,7 +206,7 @@ int main(int argc, char **argv, char **_env)
 	if (!still_loop) /*Non interactive mode*/
 	{
 		bytes_read = _getline(&buffer, &buffer_size, stdin);
-		if (bytes_read == -1)
+		if (bytes_read == ULLONG_MAX)
 		{
 			write(1, "\n", 1);
 			free_items_list(env);
@@ -214,15 +215,15 @@ int main(int argc, char **argv, char **_env)
 			return (0);
 		}
 		handle_commands(buffer, &env, &alias, argv[0], line_number);
+		free(buffer);
 	}
 
 	while (still_loop) /*Interactive mode*/
 	{
 		write(1, "($) ", 4);
 		bytes_read = _getline(&buffer, &buffer_size, stdin);
-		if (bytes_read == -1)
+		if (bytes_read == ULLONG_MAX)
 		{
-			write(1, "\n", 1);
 			free_items_list(env);
 			free_items_list(alias);
 			free(buffer);
@@ -230,12 +231,13 @@ int main(int argc, char **argv, char **_env)
 		}
 		still_loop = handle_commands(buffer, &env, &alias, argv[0], line_number);
 		++line_number;
+		free(buffer);
+		buffer = NULL;
 	}
 	still_loop = _atoi(get_item_value(env, EXIT_STATUS));
 	printf("\nReturn value: %i - %s\n", still_loop, get_item_value(env, EXIT_STATUS));
 	free_items_list(env);
 	free_items_list(alias);
-	free(buffer);
 	return (still_loop);
 }
 
