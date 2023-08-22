@@ -28,7 +28,7 @@ int _cd_(Item *env, char *directory, char *program_name)
 		directory = get_item_value(env, "HOME");
 	else if (_strcmp(directory, "-") == 0)
 		directory = get_item_value(env, "OLDPWD");
-	if (chdir(directory) == -1;)
+	if (chdir(directory) == -1)
 	{
 		write(STDERR_FILENO, program_name, _strlen(program_name));
 		write(STDERR_FILENO, ": 1", 3);
@@ -41,7 +41,7 @@ int _cd_(Item *env, char *directory, char *program_name)
 	}
 	else
 	{
-		_setenv_(env, "OLDPWD", cwd);
+		_setenv_(&env, "OLDPWD", cwd);
 		if (getcwd(cwd, sizeof(cwd)) == NULL)
 		{
 			write(STDERR_FILENO, "getcwd() error", 15);
@@ -79,11 +79,11 @@ int _env_(Item *env)
  * @value: the value of the new variable
  * Return: 0 on success;
  */
-int _setenv_(Item *env, char *name, char *value)
+int _setenv_(Item **env, char *name, char *value)
 {
 	Item *env_iter = NULL;
 
-	env_iter = env;
+	env_iter = *env;
 	if (!env_iter || !name)
 		write(STDERR_FILENO, "setenv ERROR", 13);
 	env_iter->name = name;
@@ -98,7 +98,7 @@ int _setenv_(Item *env, char *name, char *value)
 		env_iter->value = _strdup(value);
 		return (0);
 	}
-	env = add_node(&env, name, value);
+	*env = add_node(*env, name, value);
 	return (0);
 }
 
