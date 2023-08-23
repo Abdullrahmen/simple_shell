@@ -19,6 +19,7 @@
 #define E_DIRECTORY_UNFOUND -6
 #define E_INVALID_ENV_NAME -7
 #define E_INVALID_ARGUMENTS -8
+extern char **environ;
 
 /**
 * item - General item for env and alias

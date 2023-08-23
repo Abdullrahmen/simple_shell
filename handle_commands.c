@@ -139,28 +139,32 @@ int handle_separators(int prev_result, char separator)
 
 int command_executer(char *path, char **argv, Item **env)
 {
-	char **_env = NULL, *tmp = NULL;
-	size_t i = 0;
+	char *tmp = NULL;
+	/*size_t i = 0;*/
 	int pid = 0;
 	int status = 0;
 
 	/*printf("\nCommand executed with:Path = %s\n", path);
 	printf("Result:\n-------------------\n");*/
-	_env = items2str(*env);
+	/*_env = items2str(*env);*/
 	pid = fork();
 	if (!pid)
 	{
-		execve(path, argv, _env);
+		execve(path, argv, environ);
+		/*i = 0;
+		while (_env[i])
+			free(_env[i++]);
+		free(_env);*/
 		exit(EXIT_FAILURE);
 	}
 	waitpid(pid, &status, 0);
 	tmp = int2str(WEXITSTATUS(status));
 	_setenv_(env, LAST_EXIT_STATUS, tmp);
 	free(tmp);
-	i = 0;
+	/*i = 0;
 	while (_env[i])
 		free(_env[i++]);
-	free(_env);
+	free(_env);*/
 
 	if (status)
 		return (E_FILE_RETURN_E);
