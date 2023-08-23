@@ -33,6 +33,12 @@ int check_command_type(char *first_token, Item *env, char **path)
 
 	if (first_token[0] == '/')
 		*path = _strdup(first_token);
+	else if (first_token[0] == '.' && first_token[1] == '/')
+	{
+		*path = _strdup(get_item_value(env, "PWD"));
+		_str_concat(path, "/");
+		_str_concat(path, &first_token[2]);
+	}
 	else
 	{
 		g_path = _strdup(get_item_value(env, "PATH"));
@@ -85,6 +91,7 @@ int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit)
 				++i;
 			if (argv[1][i])
 				return (E_ILLEGAL_EXIT_NUMBER);
+			exit(_atoi(argv[1]));
 			_setenv_(env, EXIT_STATUS, argv[1]);
 		}
 		*is_exit = 1;
@@ -253,7 +260,7 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 	char *buffer = NULL;
 	size_t buffer_size = 0, bytes_read = 0;
 	unsigned int line_number = 1;
-	int still_loop = 0;
+	int still_loop = 0, still_loop2 = 1;
 	Item *env = NULL, *alias = NULL;
 
 	alias = init_alias();
@@ -270,17 +277,21 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 	still_loop = isatty(STDIN_FILENO);
 	if (!still_loop) /*Non interactive mode*/
 	{
-		bytes_read = _getline(&buffer, &buffer_size, stdin);
-		if (bytes_read == ULLONG_MAX)
+		while (still_loop2)
 		{
-			write(1, "\n", 1);
-			free_items_list(env);
-			free_items_list(alias);
+			bytes_read = getline(&buffer, &buffer_size, stdin);
+			if (bytes_read == ULLONG_MAX)
+			{
+				free_items_list(env);
+				free_items_list(alias);
+				free(buffer);
+				return (0);
+			}
+			still_loop2 = handle_commands(buffer, &env, &alias, argv[0], line_number);
+			++line_number;
 			free(buffer);
-			return (0);
+			buffer = NULL;
 		}
-		handle_commands(buffer, &env, &alias, argv[0], line_number);
-		free(buffer);
 	}
 
 	while (still_loop) /*Interactive mode*/
