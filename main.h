@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <sys/wait.h>
+#include <string.h>
 #define INIT_LINE_LENGTH 128
 #define EXIT_STATUS "___EXIT_STATUS___"
 #define LAST_EXIT_STATUS "___LAST_EXIT_STATUS___"
