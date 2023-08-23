@@ -249,6 +249,7 @@ Item *init_alias()
 	return (alias);
 }
 
+
 /**
 * free_items_list - free an items linked list
 * @items: the list
@@ -257,12 +258,17 @@ void free_items_list(Item *items)
 {
 	Item *iter = items;
 
+	if (!items)
+		return;
+	iter = items;
+	items = items->next;
 	free(iter->name);
 	free(iter->value);
 	free(iter);
-	while (iter->next)
+	while (items)
 	{
-		iter = iter->next;
+		iter = items;
+		items = items->next;
 		free(iter->name);
 		free(iter->value);
 		free(iter);

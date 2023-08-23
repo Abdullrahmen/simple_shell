@@ -355,12 +355,14 @@ Item *filter_commands(char *commands, char *program_name, unsigned int line_numb
 		{
 			write(STDERR_FILENO, _strcat(error_msg, &iter[start]), _strlen(error_msg) + 2);
 			write(STDERR_FILENO, "\" unexpected\n", 13);
+			free(error_msg);
 			return (NULL);
 		}
 		if (iter[start] == ';' || iter[start] == '|' || iter[start] == '&')
 		{
 			write(STDERR_FILENO, _strcat(error_msg, &iter[start]), _strlen(error_msg) + 1);
 			write(STDERR_FILENO, "\" unexpected\n", 13);
+			free(error_msg);
 			return (NULL);
 		}
 
@@ -368,6 +370,7 @@ Item *filter_commands(char *commands, char *program_name, unsigned int line_numb
 		if (!iter2->name)
 		{
 			free_items_list(commands_list);
+			free(error_msg);
 			return (NULL);
 		}
 		*iter2->name = ' ';
@@ -386,6 +389,7 @@ Item *filter_commands(char *commands, char *program_name, unsigned int line_numb
 			{
 				free_items_list(commands_list);
 				write(STDERR_FILENO, "| is not supported yet\n", 24);
+				free(error_msg);
 				return (NULL);
 			}
 		}
@@ -397,6 +401,7 @@ Item *filter_commands(char *commands, char *program_name, unsigned int line_numb
 			{
 				free_items_list(commands_list);
 				write(STDERR_FILENO, "& is not supported yet\n", 24);
+				free(error_msg);
 				return (NULL);
 			}
 		}
@@ -406,6 +411,7 @@ Item *filter_commands(char *commands, char *program_name, unsigned int line_numb
 			{
 				free_items_list(commands_list);
 				write(STDERR_FILENO, _strcat(error_msg, ";;\" unexpected\n"), _strlen(error_msg) + 15);
+				free(error_msg);
 				return (NULL);
 			}
 			else
@@ -433,6 +439,7 @@ Item *filter_commands(char *commands, char *program_name, unsigned int line_numb
 		start = end;
 	}
 	*iter2->name = ' ';
+	free(error_msg);
 	return (commands_list);
 }
 

@@ -42,7 +42,7 @@ char *_strcpy(char *dest, char *src);
 size_t _strlen(char *s);
 int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
-void _str_concat(char **dest, char *src);
+char *_str_concat(char **dest, char *src);
 int _atoi(char *str);
 
 /*handle_commands.c -> A*/

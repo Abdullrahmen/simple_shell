@@ -1,5 +1,5 @@
 #include "main.h"
-void _str_concat(char **dest, char *src)
+char *_str_concat(char **dest, char *src)
 {
 	char *temp = NULL;
 	size_t i = 0, len = 0, len2 = 0, len3 = 0;
@@ -9,7 +9,7 @@ void _str_concat(char **dest, char *src)
 	len3 = len + len2;
 	temp = malloc(sizeof(char) * (len3 + 1));
 	if (!temp)
-		return;
+		return (NULL);
 	while (len3)
 	{
 		if (i < len)
@@ -22,6 +22,7 @@ void _str_concat(char **dest, char *src)
 	temp[i] = '\0';
 	free(*dest);
 	*dest = temp;
+	return (temp);
 }
 /**
 * 
@@ -188,11 +189,8 @@ int handle_command(char *command, Item **env, Item **alias, char *program_name, 
 	{
 		command_type = check_command_type(argv[0], *env, &path);
 		if (command_type >= 0)
-		{
-
 			command_result = command_executer(path, argv, env);
-			free(path);
-		}
+		free(path);
 	}
 
 	if (command_type < 0)
