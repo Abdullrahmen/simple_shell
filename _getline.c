@@ -33,6 +33,8 @@ size_t _getlineChecker(char **string, size_t *n,
  */
 size_t _getline(char **string, size_t *n, FILE *stream)
 {
-	getline(&string, &n, stdin);
+	char *buffer = *string;
+	size_t buffsize = *n;
+	getline(&buffer, &buffsize, stream);
 	return (0);
 }
