@@ -91,9 +91,10 @@ int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit)
 				++i;
 			if (argv[1][i])
 				return (E_ILLEGAL_EXIT_NUMBER);
-			exit(_atoi(argv[1]));
 			_setenv_(env, EXIT_STATUS, argv[1]);
 		}
+		else
+			_setenv_(env, EXIT_STATUS, get_item_value(*env, LAST_EXIT_STATUS));
 		*is_exit = 1;
 		return (1);
 	}
@@ -194,9 +195,6 @@ int handle_command(char *command, Item **env, Item **alias, char *program_name, 
 		}
 	}
 
-	/*printf("End result\n");
-	printf("=============\n\n");*/
-	fflush(stdout);
 	if (command_type < 0)
 		error_id = command_type;
 	if (command_result)
@@ -235,8 +233,6 @@ int handle_commands(char *commands, Item **env, Item **alias, char *program_name
 	{
 		if (!*iter_command->value)
 			break;
-		/*printf("=============\nSeparator:(%c)\nTokens:", *iter_command->name);
-		fflush(stdout);*/
 		name2value(&iter_command->value, *env, *alias);
 		command_result = handle_command(iter_command->value, env, alias, program_name, line_number);
 		if (!command_result)
@@ -244,7 +240,6 @@ int handle_commands(char *commands, Item **env, Item **alias, char *program_name
 			free_items_list(commands_list);
 			return (0);
 		}
-			/*handle_error(iter_command->value, command_result, program_name);*/
 		exec_next_command = handle_separators(command_result, *iter_command->name);
 		iter_command = iter_command->next;
 	}
@@ -282,10 +277,8 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 			bytes_read = getline(&buffer, &buffer_size, stdin);
 			if (bytes_read == ULLONG_MAX)
 			{
-				free_items_list(env);
-				free_items_list(alias);
 				free(buffer);
-				return (0);
+				break;
 			}
 			still_loop2 = handle_commands(buffer, &env, &alias, argv[0], line_number);
 			++line_number;
@@ -301,10 +294,8 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 		if (bytes_read == ULLONG_MAX)
 		{
 			write(1, "\n", 1);
-			free_items_list(env);
-			free_items_list(alias);
 			free(buffer);
-			return (0);
+			break;
 		}
 		still_loop = handle_commands(buffer, &env, &alias, argv[0], line_number);
 		++line_number;

@@ -154,10 +154,9 @@ int command_executer(char *path, char **argv, Item **env)
 		exit(EXIT_FAILURE);
 	}
 	waitpid(pid, &status, 0);
-	tmp = int2str(status);
+	tmp = int2str(WEXITSTATUS(status));
 	_setenv_(env, LAST_EXIT_STATUS, tmp);
 	free(tmp);
-
 	i = 0;
 	while (_env[i])
 		free(_env[i++]);

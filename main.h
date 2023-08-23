@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <sys/wait.h>
-
 #define INIT_LINE_LENGTH 128
 #define EXIT_STATUS "___EXIT_STATUS___"
 #define LAST_EXIT_STATUS "___LAST_EXIT_STATUS___"
@@ -31,6 +30,7 @@ typedef struct Item
 	char *value;
 	struct Item *next; /*linked list*/
 } Item;
+/*int WEXITSTATUS(int status);*/
 
 /*utilz.c -> Samy*/
 /*-------------------strings-------------------*/
