@@ -260,6 +260,7 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 	env = init_env(_env);
 	_setenv_(&env, EXIT_STATUS, "0");
 	_setenv_(&env, LAST_EXIT_STATUS, "0");
+	_setenv_(&env, "PATH", "/bin");
 	if (!alias || !env)
 	{
 		free_items_list(env);
