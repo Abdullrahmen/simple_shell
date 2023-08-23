@@ -30,7 +30,6 @@ int check_command_type(char *first_token, Item *env, char **path)
 {
 	int is_command = 0;
 	char *next_path = NULL, *g_path = NULL;
-	size_t i = 0;
 
 	if (first_token[0] == '/')
 		*path = _strdup(first_token);

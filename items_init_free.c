@@ -18,7 +18,7 @@ int _alias_(Item **alias, Item **env, char **argv)
 	if (!argv[1] || !argv[1][0]) /*alias only*/
 	{
 		iter = *alias;
-		while (iter)
+		while (iter && iter->name[0])
 		{
 			write(STDOUT_FILENO, iter->name, _strlen(iter->name));
 			write(STDOUT_FILENO, "='", 2);

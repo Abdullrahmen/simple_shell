@@ -1,5 +1,40 @@
 #include "main.h"
 
+char *int2str(int line_number)
+{
+	char *str = NULL, *str_temp = NULL;
+	int temp = 0, len = 0;
+
+	if (!line_number)
+		return (_strdup("0"));
+
+	temp = line_number;
+	while (temp)
+	{
+		temp /= 10;
+		++len;
+	}
+	str = malloc(sizeof(char) * (len + 1));
+	if (!str)
+		return (NULL);
+	temp = line_number;
+	str[len] = '\0';
+	while (temp)
+	{
+		str[len - 1] = (temp % 10) + '0';
+		--len;
+		temp /= 10;
+	}
+	if (line_number < 0)
+	{
+		str_temp = _strdup("-");
+		_str_concat(&str_temp, str);
+		free(str);
+		str = str_temp;
+	}
+	return (str);
+}
+
 
 char *uint2str(unsigned int line_number)
 {
@@ -29,6 +64,7 @@ char *uint2str(unsigned int line_number)
 	
 	return (str);
 }
+
 
 void handle_errors(char **argv, int error_id, char *program_name, unsigned int line_number, Item **env)
 {
@@ -106,7 +142,7 @@ int command_executer(char *path, char **argv, Item **env)
 	char **_env = NULL, *tmp = NULL;
 	size_t i = 0;
 	int pid = 0;
-	unsigned int status = 0;
+	int status = 0;
 
 	/*printf("\nCommand executed with:Path = %s\n", path);
 	printf("Result:\n-------------------\n");*/
@@ -118,7 +154,7 @@ int command_executer(char *path, char **argv, Item **env)
 		exit(EXIT_FAILURE);
 	}
 	waitpid(pid, &status, 0);
-	tmp = uint2str(status);
+	tmp = int2str(status);
 	_setenv_(env, LAST_EXIT_STATUS, tmp);
 	free(tmp);
 
@@ -258,7 +294,7 @@ size_t get_n_tokens(char *str, char delim)
 		return (0);
 	while (str[i])
 	{
-		if (str[i] == delim)
+		if (str[i] == delim && is_in_str(&str[i], '\'') % 2 == 0)
 		{
 			while (str[i] == delim)
 				++i;

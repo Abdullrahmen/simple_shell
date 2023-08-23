@@ -13,11 +13,8 @@
  */
 int _cd_(Item *env, char *directory)
 {
-	Item *env_iter = NULL;
 	char cwd[1024];
-	int value = 0;
 
-	env_iter = env;
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (0);
 
@@ -67,7 +64,6 @@ int _unsetenv_(Item **env, char *name)
 {
 	Item *env_iter = NULL;
 	unsigned int i = 0;
-	char *p;
 	int env_changed = 0;
 
 	env_iter = *env;
