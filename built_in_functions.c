@@ -61,29 +61,28 @@ int _env_(Item *env)
  * _unsetenv_ - unsets the environment variable
  * @env: A list of the environment variable
  * @name: the name of the variable
- * Return: 0 on success
+ * Return: one on success and 0 on failure
  */
-int _unsetenv_(Item *env, char *name)
+int _unsetenv_(Item **env, char *name)
 {
 	Item *env_iter = NULL;
 	unsigned int i = 0;
 	char *p;
-	int env_changed;
+	int env_changed = 0;
 
-	env_iter = env;
+	env_iter = *env;
 	if (!env_iter || !name)
-		write(STDERR_FILENO, "unsetenv ERROR", 15);
+		return (0);
 	while (env_iter)
 	{
-		if (env_iter->name == name)
+		if (!_strcmp(env_iter->name, name))
 		{
-			env_changed = delete_nodeint_at_index(&env, i);
-			i = 0;
-			env_iter = env;
+			env_iter = env_iter->next;
+			env_changed = delete_nodeint_at_index(env, i);
 			continue;
 		}
 		env_iter = env_iter->next;
-		i++;
+		++i;
 	}
 	return (env_changed);
 }

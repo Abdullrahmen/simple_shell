@@ -116,12 +116,31 @@ int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit)
 		_setenv_(env, LAST_EXIT_STATUS, "0");
 		return (1);
 	}
+	if (!_strcmp(argv[0], "unsetenv"))
+	{
+		if (!_unsetenv_(env, argv[1]))
+			return (E_INVALID_ARGUMENTS);
+		return (1);
+	}
 	if (!_strcmp(argv[0], "alias"))
 	{
 		_alias_(alias, env, argv);
 		return (1);
 	}
 	return (0);
+}
+
+size_t is_in_str(char *str, char delim)
+{
+	size_t n = 0, i = 0;
+
+	while (str[i])
+	{
+		if (str[i] == delim)
+			++n;
+		++i;
+	}
+	return (n);
 }
 
 /**
@@ -135,7 +154,7 @@ int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit)
 */
 int handle_command(char *command, Item **env, Item **alias, char *program_name, unsigned int line_number)
 {
-	char **argv = NULL, *path = NULL;
+	char **argv = NULL, *path = NULL, *temp = NULL;
 	size_t i = 0;
 	int command_type = 0, command_result = 0, is_exit = 0, error_id = 0;
 
@@ -145,7 +164,14 @@ int handle_command(char *command, Item **env, Item **alias, char *program_name, 
 	argv[0] = _strtok(command, " ");
 	while (argv[i])
 	{
-		/*printf("%s > ", argv[i]);*/
+		if (is_in_str(argv[i], '\'') % 2 == 1)
+		{
+			temp = _strtok(NULL, " ");
+			if (!temp)
+				break;
+			--temp;
+			*temp = ' ';
+		}
 		++i;
 		argv[i] = _strtok(NULL, " ");
 	}

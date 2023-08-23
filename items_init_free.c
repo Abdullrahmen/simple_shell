@@ -29,6 +29,7 @@ int _alias_(Item **alias, Item **env, char **argv)
 		return (0);
 	}
 
+	i = 1;
 	str_iter = argv[i];
 	while (str_iter)
 	{
@@ -38,12 +39,33 @@ int _alias_(Item **alias, Item **env, char **argv)
 			j = 0;
 			while (str_iter[j] != '=')
 				++j;
-			value = copy_till_delim(&str_iter[j + 1], '\'');
+			if (str_iter[j + 1] == '\'' && str_iter[j + 2])
+			{
+				value = copy_till_delim(&str_iter[j + 2], '\'');
+				if (value)
+					_setenv_(alias, name, value);
+				else
+					is_error = 1;
+				free(value);
+			}
+		}
+		else
+		{
+			value = get_item_value(*alias, argv[i]);
 			if (value)
-				_setenv_(alias, name, value);
+			{
+				write(STDOUT_FILENO, argv[i], _strlen(argv[i]));
+				write(STDOUT_FILENO, "='", 2);
+				write(STDOUT_FILENO, value, _strlen(value));
+				write(STDOUT_FILENO, "'\n", 2);
+			}
 			else
+			{
+				write(STDERR_FILENO, "alias: ", 7);
+				write(STDERR_FILENO, argv[i], _strlen(argv[i]));
+				write(STDERR_FILENO, " not found\n", 11);
 				is_error = 1;
-			free(value);
+			}
 		}
 		free(name);
 		++i;
@@ -51,6 +73,8 @@ int _alias_(Item **alias, Item **env, char **argv)
 	}
 	if (is_error)
 		_setenv_(env, LAST_EXIT_STATUS, "1");
+	else
+		_setenv_(env, LAST_EXIT_STATUS, "0");
 	return (0);
 }
 
@@ -220,8 +244,8 @@ Item *init_alias()
 	alias = malloc(sizeof(Item));
 	if (!alias)
 		return (NULL);
-	alias->name = _strdup("la");
-	alias->value = _strdup("ls -a");
+	alias->name = _strdup("");
+	alias->value = _strdup("");
 	alias->next = NULL;
 	return (alias);
 }

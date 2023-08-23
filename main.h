@@ -56,6 +56,7 @@ char *_substr(char *str, size_t bytes);
 size_t get_n_tokens(char *str, char delim);
 int _alias_(Item **alias, Item **env, char **argv);
 char *copy_till_delim(char *str, char delim);
+size_t is_in_str(char *str, char delim);
 /*executers.c -> S*/
 /* - fork
 *  - access */
@@ -82,7 +83,7 @@ void unset_item(Item *items, char *name);
 int _exit_(int status);
 int _env_(Item *env);
 int _setenv_(Item **env, char *name, char *value);
-int _unsetenv_(Item *env, char *name);
+int _unsetenv_(Item **env, char *name);
 int _cd_(Item *env, char *directory);
 
 #endif /*MAIN_H*/

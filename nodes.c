@@ -3,8 +3,8 @@
 /**
  * delete_nodeint_at_index - deletes the node at index
  * @head: head of the list
- * @index: emplacement of the node to delet
- * Return: pointr to head of list
+ * @index: emplacement of the node to delete
+ * Return: one on success and 0 on failure
  */
 int delete_nodeint_at_index(Item **head, unsigned int index)
 {
@@ -12,17 +12,17 @@ int delete_nodeint_at_index(Item **head, unsigned int index)
 	unsigned int counter = 0;
 
 	if (!head || !*head)
-		return (-1);
+		return (0);
+
+	current = *head;
 	if (index == 0)
 	{
-		current = *head;
-		*head = (*head)->next;
+		*head = current->next;
 		free(current->name);
 		free(current->value);
 		free(current);
 		return (1);
 	}
-	current = *head;
 	while (current)
 	{
 		if (counter == index)
@@ -33,9 +33,9 @@ int delete_nodeint_at_index(Item **head, unsigned int index)
 			free(current);
 			return (1);
 		}
-		counter++;
+		++counter;
 		previous = current;
 		current = current->next;
 	}
-	return (-1);
+	return (0);
 }
