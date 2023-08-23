@@ -33,8 +33,36 @@ size_t _getlineChecker(char **string, size_t *n,
  */
 size_t _getline(char **string, size_t *n, FILE *stream)
 {
-	char *buffer = *string;
-	size_t buffsize = *n;
-	getline(&buffer, &buffsize, stream);
-	return (0);
+	size_t nchars, size;
+	char *buff, *temp;
+
+	_getlineChecker(string, n, stream);
+	temp = *string;
+	size = *n;
+	while (1)
+	{
+		nchars = read(STDIN_FILENO, temp, size);
+		if (nchars == ULLONG_MAX)
+			return (ULLONG_MAX);
+		else if (nchars == 0)
+			break;
+		temp += nchars;
+		size -= nchars;
+		if (size == 0)
+		{
+			size = *n * 2;
+			buff = malloc(sizeof(char) * size);
+			if (buff == NULL)
+				return (-1);
+			*string = buff;
+			temp = *string + (*n - size);
+			*n = size;
+		}
+		if (*(temp - 1) == '\n')
+			break;
+	}
+	if (temp == *string)
+		return (-1);
+	*temp = '\0';
+	return (temp - *string);
 }
