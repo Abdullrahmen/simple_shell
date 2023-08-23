@@ -289,7 +289,7 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 	while (still_loop) /*Interactive mode*/
 	{
 		write(1, "($) ", 4);
-		bytes_read = _getline(&buffer, &buffer_size, stdin);
+		bytes_read = getline(&buffer, &buffer_size, stdin);
 		if (bytes_read == ULLONG_MAX)
 		{
 			write(1, "\n", 1);
