@@ -122,7 +122,8 @@ int _setenv_(Item **env, char *name, char *value)
 
 	if (!name || !value)
 		return (E_INVALID_ARGUMENTS);
-
+	if (!_strcmp(name, EXIT_STATUS) || !_strcmp(name, LAST_EXIT_STATUS))
+		return (0);
 	env_iter = *env;
 	while (env_iter)
 	{
