@@ -15,8 +15,6 @@ char *get_item_value(Item *items, char *name)
 {
 	Item *items_iter = NULL;
 
-	if (!_strcmp(name, EXIT_STATUS) || !_strcmp(name, LAST_EXIT_STATUS))
-		return ("0");
 	items_iter = items;
 	if (name == NULL)
 		return (NULL);
