@@ -1,7 +1,7 @@
 #include "main.h"
 /**
 * init_argv - init argv
-* @command: the cleaned and formated command
+* @command: the cleaned and formatted command
 * Return: argv
 */
 char **init_argv(char *command)
@@ -20,7 +20,10 @@ char **init_argv(char *command)
 		{
 			temp = _strtok(NULL, " ");
 			if (!temp)
+			{
+				argv[i + 1] = NULL;
 				break;
+			}
 			--temp;
 			*temp = ' ';
 		}
@@ -48,7 +51,6 @@ int handle_command(char *command, Item **env, Item **alias, char *program_name,
 
 	if (!command || !*command)
 		return (1);
-
 	argv = init_argv(command);
 
 	command_type = handle_our_built_in(argv, env, alias, &is_exit);

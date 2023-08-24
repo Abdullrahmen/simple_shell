@@ -55,5 +55,29 @@ char *_strpbrk(char *str, char *target)
  */
 char *_strtok(char *str, const char *delim)
 {
-	return (strtok(str, delim));
+	static char *remainder;
+	char *tokens = NULL;
+
+	if (!str)
+	{
+		str = remainder;
+		if (!str)
+			return (NULL);
+	}
+	str += _strspn(str, (char *)delim);
+	if (!*str)
+	{
+		remainder = NULL;
+		return (NULL);
+	}
+	tokens = str;
+	str = _strpbrk(tokens, (char *)delim);
+	if (str)
+	{
+		*str = '\0';
+		remainder = str + 1;
+	}
+	else
+		remainder = NULL;
+	return (tokens);
 }

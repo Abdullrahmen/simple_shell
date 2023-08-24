@@ -87,7 +87,6 @@ char *get_item_value(Item *items, char *name);
 /*utilz.c -> Samy*/
 /*-------------------strings-------------------*/
 char *_strtok(char *str, const char *delim);
-size_t _getline(char **string, size_t *n, FILE *stream);
 char *_strcat(char *dest, char *src);
 char *_strcpy(char *dest, char *src);
 size_t _strlen(char *s);
@@ -107,6 +106,7 @@ void unset_item(Item *items, char *name);
 int _env_(Item *env);
 int _unsetenv_(Item **env, char *name);
 int _cd_(Item *env, char *directory);
+size_t _getline_2(char **string, size_t *n, FILE *stream);
 
 #endif /*MAIN_H*/
 

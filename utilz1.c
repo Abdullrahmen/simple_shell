@@ -10,6 +10,8 @@ size_t is_in_str(char *str, char delim)
 {
 	size_t n = 0, i = 0;
 
+	if (!str || !*str)
+		return (0);
 	while (str[i])
 	{
 		if (str[i] == delim)

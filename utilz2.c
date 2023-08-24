@@ -7,7 +7,8 @@
 */
 size_t get_n_tokens(char *str, char delim)
 {
-	size_t n = 0, i = 0;
+	char *temp = NULL;
+	size_t n = 0, i = 0, j = 0;
 
 	while (str[i] == delim)
 		++i;
@@ -15,15 +16,20 @@ size_t get_n_tokens(char *str, char delim)
 		return (0);
 	while (str[i])
 	{
-		if (str[i] == delim && is_in_str(&str[i], '\'') % 2 == 0)
+		temp = _substr(str, i - j);
+		if (str[i] == delim && is_in_str(temp, '\'') % 2 == 0)
 		{
 			while (str[i] == delim)
 				++i;
 			if (str[i])
+			{
 				++n;
+				j = i;
+			}
 		}
 		else
 			++i;
+		free(temp);
 	}
 	return (n + 1);
 }
@@ -59,6 +65,9 @@ char *_substr(char *str, size_t bytes)
 {
 	char *substr = NULL;
 	size_t i = 0;
+
+	if (!str || !*str)
+		return (NULL);
 
 	while (str[i] && i < bytes)
 		++i;
