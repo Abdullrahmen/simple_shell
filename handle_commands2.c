@@ -119,26 +119,23 @@ int handle_our_built_in2(char **argv, Item **env, Item **alias)
 */
 int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit)
 {
-/*
-*	size_t i = 0;
-*
-*	if (!_strcmp(argv[0], "exit"))
-*	{
-*		if (argv[1])
-*		{
-*			while (argv[1][i] >= '0' && argv[1][i] <= '9')
-*				++i;
-*			if (argv[1][i])
-*				return (E_ILLEGAL_EXIT_NUMBER);
-*			_setenv_(env, EXIT_STATUS, argv[1]);
-*		}
-*		else
-*			_setenv_(env, EXIT_STATUS, get_item_value(*env, LAST_EXIT_STATUS));
-*		*is_exit = 1;
-*		return (1);
-*	}
-*/
-	*is_exit = 0;
+	size_t i = 0;
+
+	if (!_strcmp(argv[0], "exit"))
+	{
+		if (argv[1])
+		{
+			while (argv[1][i] >= '0' && argv[1][i] <= '9')
+				++i;
+			if (argv[1][i])
+				return (E_ILLEGAL_EXIT_NUMBER);
+			_setenv_(env, EXIT_STATUS, argv[1]);
+		}
+		else
+			_setenv_(env, EXIT_STATUS, get_item_value(*env, LAST_EXIT_STATUS));
+		*is_exit = 1;
+		return (1);
+	}
 	if (!_strcmp(argv[0], "env"))
 	{
 		if (!argv[1])
