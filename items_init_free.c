@@ -1,83 +1,4 @@
 #include "main.h"
-
-/**
- * _env_ - prints the environment variables
- * @env: the list of the environment variables
- * Return: 0 on success
- */
-int _alias_(Item **alias, Item **env, char **argv)
-{
-	Item *iter = NULL;
-	char *str_iter = NULL, *name = NULL, *value = NULL;
-	size_t i = 1, j = 0;
-	int is_error = 0;
-
-	if (_strcmp(argv[0], "alias"))
-		return (1);
-	
-	if (!argv[1] || !argv[1][0]) /*alias only*/
-	{
-		iter = *alias;
-		while (iter && iter->name[0])
-		{
-			write(STDOUT_FILENO, iter->name, _strlen(iter->name));
-			write(STDOUT_FILENO, "='", 2);
-			write(STDOUT_FILENO, iter->value, _strlen(iter->value));
-			write(STDOUT_FILENO, "'\n", 2);
-			iter = iter->next;
-		}
-		return (0);
-	}
-
-	i = 1;
-	str_iter = argv[i];
-	while (str_iter)
-	{
-		name = copy_till_delim(str_iter, '=');
-		if (name)
-		{
-			j = 0;
-			while (str_iter[j] != '=')
-				++j;
-			if (str_iter[j + 1] == '\'' && str_iter[j + 2])
-			{
-				value = copy_till_delim(&str_iter[j + 2], '\'');
-				if (value)
-					_setenv_(alias, name, value);
-				else
-					is_error = 1;
-				free(value);
-			}
-		}
-		else
-		{
-			value = get_item_value(*alias, argv[i]);
-			if (value)
-			{
-				write(STDOUT_FILENO, argv[i], _strlen(argv[i]));
-				write(STDOUT_FILENO, "='", 2);
-				write(STDOUT_FILENO, value, _strlen(value));
-				write(STDOUT_FILENO, "'\n", 2);
-			}
-			else
-			{
-				write(STDERR_FILENO, "alias: ", 7);
-				write(STDERR_FILENO, argv[i], _strlen(argv[i]));
-				write(STDERR_FILENO, " not found\n", 11);
-				is_error = 1;
-			}
-		}
-		free(name);
-		++i;
-		str_iter = argv[i];
-	}
-	if (is_error)
-		_setenv_(env, LAST_EXIT_STATUS, "1");
-	else
-		_setenv_(env, LAST_EXIT_STATUS, "0");
-	return (0);
-}
-
 /**
  * add_node - adds a new node at the beginning of a list_t list.
  * @head: the head of the list
@@ -137,56 +58,6 @@ int _setenv_(Item **env, char *name, char *value)
 	*env = add_node(*env, name, value);
 	return (0);
 }
-char *copy_from_delim(char *str, char delim)
-{
-	char *copied;
-	size_t i = 0, j = 1;
-
-	while (str[i] && str[i] != delim)
-		++i;
-	if (!str[i])
-		return (NULL);
-	while (str[i + j])
-		++j;
-	
-	copied = malloc(sizeof(*copied) * j);
-	if (!copied)
-		return (NULL);
-
-	j = 1;
-	while (str[i + j])
-	{
-		copied[j - 1] = str[i + j];
-		++j;
-	}
-	copied[j - 1] = '\0';
-	return (copied);
-}
-
-char *copy_till_delim(char *str, char delim)
-{
-	char *copied;
-	size_t i = 0;
-
-	while (str[i] && str[i] != delim)
-		++i;
-
-	if (!str[i])
-		return (NULL);
-
-	copied = malloc(sizeof(*copied) * (i + 1));
-	if (!copied)
-		return (NULL);
-
-	i = 0;
-	while (str[i] != delim)
-	{
-		copied[i] = str[i];
-		++i;
-	}
-	copied[i] = '\0';
-	return (copied);
-}
 
 /**
 * init_env - Initialize an Item struct environment list from char **
@@ -233,24 +104,6 @@ Item *init_env(char **_env)
 }
 
 /**
-* init_alias - Initialize an Item struct alias list
-* Return: pointer to the first node or NULL if error
-*/
-Item *init_alias()
-{
-	Item *alias = NULL;
-
-	alias = malloc(sizeof(Item));
-	if (!alias)
-		return (NULL);
-	alias->name = _strdup("");
-	alias->value = _strdup("");
-	alias->next = NULL;
-	return (alias);
-}
-
-
-/**
 * free_items_list - free an items linked list
 * @items: the list
 */
@@ -273,5 +126,19 @@ void free_items_list(Item *items)
 		free(iter->value);
 		free(iter);
 	}
+}
+
+/**
+* skip_spaces - skip spaces
+* @str:string
+* Return: a pointer to the character after the last space
+*/
+char *skip_spaces(char *str)
+{
+	size_t i = 0;
+
+	while (str[i] == ' ')
+		++i;
+	return (&str[i]);
 }
 
