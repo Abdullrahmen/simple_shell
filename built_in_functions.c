@@ -45,6 +45,12 @@ int _env_(Item *env)
 	env_iter = env;
 	while (env_iter)
 	{
+		if (!_strcmp(env_iter->name, EXIT_STATUS) ||
+			!_strcmp(env_iter->name, LAST_EXIT_STATUS))
+		{
+			env_iter = env_iter->next;
+			continue;
+		}
 		write(STDOUT_FILENO, env_iter->name, _strlen(env_iter->name));
 		write(STDOUT_FILENO, "=", 1);
 		write(STDOUT_FILENO, env_iter->value, _strlen(env_iter->value));
