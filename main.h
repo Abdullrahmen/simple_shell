@@ -34,7 +34,7 @@ typedef struct Item
 	struct Item *next; /*linked list*/
 } Item;
 
-/*handle_commands1*/
+/*------------------------handle_commands_1-----------------------*/
 char **init_argv(char *command);
 int handle_commands(char *commands, Item **env, Item **alias,
 		char *program_name, unsigned int line_number);
@@ -43,16 +43,15 @@ Item *filter_commands(char *commands, char *program_name,
 int handle_command(char *command, Item **env, Item **alias,
 	char *program_name, unsigned int line_number); /*one command only*/
 
-/*handle_commands2*/
+/*------------------------handle_commands_2------------------------*/
 int check_command_type(char *first_token, Item *env, char **path);
 int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit);
 
-/*------------------------handle_commands3-----------------------*/
+/*------------------------handle_commands_3-----------------------*/
 void handle_errors(char **argv, int error_id, char *program_name,
 		unsigned int line_number, Item **env);
 int handle_separators(int prev_result, char separator);
 int command_executer(char *path, char **argv, Item **env);
-
 
 /*------------------utilz1------------------*/
 char *_str_concat(char **dest, char *src);
