@@ -39,7 +39,10 @@ void alias_2(char **argv, size_t i, char *str_iter, char **name,
 			++j;
 		if (str_iter[j + 1])
 		{
-			*value = _strdup(&str_iter[j + 1]);
+			if (get_item_value(*alias, &str_iter[j + 1]))
+				*value = _strdup(get_item_value(*alias, &str_iter[j + 1]));
+			else
+				*value = _strdup(&str_iter[j + 1]);
 			if (*value)
 				_setenv_(alias, *name, *value);
 			else
