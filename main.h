@@ -61,7 +61,7 @@ char **items2str(Item *items);
 char *copy_from_delim(char *str, char delim);
 char *copy_till_delim(char *str, char delim);
 
-/*utilz2*/
+/*------------------utilz2*----------------*/
 char *_substr(char *str, size_t bytes);
 size_t get_n_tokens(char *str, char delim);
 size_t get_items_len(Item *items);
