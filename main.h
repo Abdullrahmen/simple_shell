@@ -47,7 +47,7 @@ int handle_command(char *command, Item **env, Item **alias,
 int check_command_type(char *first_token, Item *env, char **path);
 int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit);
 
-/*handle_commands3*/
+/*------------------------handle_commands3-----------------------*/
 void handle_errors(char **argv, int error_id, char *program_name,
 		unsigned int line_number, Item **env);
 int handle_separators(int prev_result, char separator);
