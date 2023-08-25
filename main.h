@@ -68,23 +68,21 @@ size_t get_items_len(Item *items);
 char *int2str(int line_number);
 char *uint2str(unsigned int line_number);
 
-/*items_init_free.c -> A*/
+/*----------------items_init_free------------------*/
 Item *init_env(char **_env);
 void free_items_list(Item *items);
 int _setenv_(Item **env, char *name, char *value);
 Item *add_node(Item *head, char *name, char *value);
 char *skip_spaces(char *str);
 
-/*alias*/
+/*----------------------alias*---------------------*/
 int _alias_(Item **alias, Item **env, char **argv);
 Item *init_alias();
 
-/*items_utilize*/
+/*------------------items_utilize------------------*/
 void name2value(char **str, Item *env, Item *alias);
 char *get_item_value(Item *items, char *name);
 
-
-/*utilz.c -> Samy*/
 /*-------------------strings-------------------*/
 char *_strtok(char *str, const char *delim);
 char *_strcat(char *dest, char *src);
@@ -94,15 +92,14 @@ int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
 int _atoi(char *str);
 
-/*handle_commands.c -> A*/
-/*----------------------nodes-----------------------*/
+/*-------------------------nodes---------------------------*/
 int delete_nodeint_at_index(Item **head, unsigned int index);
 
 /*------------------items_utilize-------------------*/
 void set_item(Item *items, char *name, char *value);
 void unset_item(Item *items, char *name);
 
-/*----------------built_in_functions----------------*/
+/*------------------built_in_functions------------------*/
 int _env_(Item *env);
 int _unsetenv_(Item **env, char *name);
 int _cd_(Item *env, char *directory);
