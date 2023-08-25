@@ -88,7 +88,10 @@ char *_strcpy(char *dest, char *src);
 size_t _strlen(char *s);
 int _strcmp(char *s1, char *s2);
 char *_strdup(char *str);
+
+/*-------------------atoi-------------------*/
 int _atoi(char *str);
+int _atoi_exit(Item *env);
 
 /*-------------------------nodes---------------------------*/
 int delete_nodeint_at_index(Item **head, unsigned int index);

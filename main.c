@@ -10,8 +10,8 @@ int __init__(Item **alias, Item **env, char **_env)
 {
 	*alias = init_alias();
 	*env = init_env(_env);
-	_setenv_(env, EXIT_STATUS, "0");
-	_setenv_(env, LAST_EXIT_STATUS, "0");
+	_setenv_(env, EXIT_STATUS, "-1");
+	_setenv_(env, LAST_EXIT_STATUS, "-1");
 	if (!*alias || !*env)
 	{
 		free_items_list(*env);
@@ -65,7 +65,7 @@ int main(__attribute__((unused))int argc, char **argv, char **_env)
 		free(buffer);
 		buffer = NULL;
 	}
-	still_loop = _atoi(get_item_value(env, EXIT_STATUS));
+	still_loop = _atoi_exit(env);
 	free_items_list(env);
 	free_items_list(alias);
 	return (still_loop);

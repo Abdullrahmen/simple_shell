@@ -4,6 +4,23 @@
  * @str: the required string
  * Return: on success the integer value.
  */
+int _atoi_exit(Item *env)
+{
+	if (!_strcmp(get_item_value(env, EXIT_STATUS), "-1"))
+	{
+		if (!_strcmp(get_item_value(env, LAST_EXIT_STATUS), "-1"))
+			return (0);
+		else
+			return (_atoi(get_item_value(env, LAST_EXIT_STATUS)));
+	}
+	return (_atoi(get_item_value(env, EXIT_STATUS)));
+}
+
+/**
+ * _atoi - converts a string to an integer
+ * @str: the required string
+ * Return: on success the integer value.
+ */
 int _atoi(char *str)
 {
 	int num;

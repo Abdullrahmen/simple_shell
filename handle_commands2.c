@@ -129,7 +129,7 @@ int handle_our_built_in(char **argv, Item **env, Item **alias, int *is_exit)
 				++i;
 			if (argv[1][i])
 				return (E_ILLEGAL_EXIT_NUMBER);
-			_setenv_(env, EXIT_STATUS, argv[1]);
+			_setenv_(env, LAST_EXIT_STATUS, argv[1]);
 		}
 		else
 			_setenv_(env, EXIT_STATUS, get_item_value(*env, LAST_EXIT_STATUS));

@@ -101,6 +101,7 @@ int handle_commands(char *commands, Item **env, Item **alias,
 	{
 		if (!*iter_command->value)
 			break;
+		_setenv_(env, EXIT_STATUS, "-1");
 		name2value(&iter_command->value, *env, *alias);
 		command_result = handle_command(iter_command->value, env,
 					alias, program_name, line_number);
@@ -113,6 +114,7 @@ int handle_commands(char *commands, Item **env, Item **alias,
 		iter_command = iter_command->next;
 	}
 	free_items_list(commands_list);
+	_setenv_(env, EXIT_STATUS, "-1");
 	return (1);
 }
 
