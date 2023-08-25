@@ -10,7 +10,7 @@
 #define INIT_LINE_LENGTH 128
 #define EXIT_STATUS "___EXIT_STATUS___"
 #define LAST_EXIT_STATUS "___LAST_EXIT_STATUS___"
-/* Error ids (all are must be negative) */
+/*----Errors IDs (all are must be negative)----*/
 #define E_COMMAND_UNKNOWN -1
 #define E_PATH_NOT_EXIST -2
 #define E_PERMISSION_DENIED -3
