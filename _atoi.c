@@ -1,7 +1,7 @@
 #include "main.h"
 /**
- * _atoi - converts a string to an integer
- * @str: the required string
+ * _atoi_exit - converts a string to an integer
+ * @env: the required env
  * Return: on success the integer value.
  */
 int _atoi_exit(Item *env)
