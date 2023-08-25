@@ -37,9 +37,9 @@ void alias_2(char **argv, size_t i, char *str_iter, char **name,
 	{
 		while (str_iter[j] != '=')
 			++j;
-		if (str_iter[j + 1] == '\'' && str_iter[j + 2])
+		if (str_iter[j + 1])
 		{
-			*value = copy_till_delim(&str_iter[j + 2], '\'');
+			*value = _strdup(&str_iter[j + 1]);
 			if (*value)
 				_setenv_(alias, *name, *value);
 			else
