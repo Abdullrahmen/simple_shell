@@ -103,6 +103,6 @@ int _env_(Item *env);
 int _unsetenv_(Item **env, char *name);
 int _cd_(Item *env, char *directory);
 size_t _getline_2(char **string, size_t *n, FILE *stream);
-k
+
 #endif /*MAIN_H*/
 
